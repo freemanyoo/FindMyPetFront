@@ -1,0 +1,1 @@
+yarn add axios bootstrap react react-bootstrap react-dom  react-router-dom recharts  socket.io-client
