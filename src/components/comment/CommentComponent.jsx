@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-// import axios from "axios"; // ◀️ 기존 axios import 삭제
-import axiosInstance from "../../api/axiosInstance"; // ✅ 새로 만든 인스-턴스를 import
+import axiosInstance from "../../api/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const CommentComponent = ({ postId, isPostCompleted }) => {
     const [comments, setComments] = useState([]);
@@ -9,10 +9,11 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
 
+    const { user } = useAuth();
+
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                // ✅ axios -> axiosInstance 로 변경
                 const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
@@ -31,10 +32,7 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             formData.append("imageFile", imageFile);
         }
         try {
-            // ✅ axios -> axiosInstance 로 변경
-            const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData, {
-                // ✅ 헤더 설정이 더 이상 필요 없습니다. axiosInstance가 자동으로 처리합니다.
-            });
+            const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData);
             setComments([...comments, response.data]);
             setNewComment("");
             setImageFile(null);
@@ -48,7 +46,6 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const handleDelete = async (commentId) => {
         if (window.confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             try {
-                // ✅ axios -> axiosInstance 로 변경
                 await axiosInstance.delete(`/api/comments/${commentId}`);
                 setComments(comments.filter((comment) => comment.commentId !== commentId));
             } catch (error) {
@@ -65,10 +62,7 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
         formData.append("commentDTO", new Blob([JSON.stringify(commentDTO)], { type: "application/json" }));
 
         try {
-            // ✅ axios -> axiosInstance 로 변경
-            const response = await axiosInstance.put(`/api/comments/${commentId}`, formData, {
-                // ✅ 헤더 설정이 더 이상 필요 없습니다.
-            });
+            const response = await axiosInstance.put(`/api/comments/${commentId}`, formData);
             setComments(
                 comments.map((comment) =>
                     comment.commentId === commentId ? response.data : comment
@@ -90,13 +84,13 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="comment-form">
-          <textarea
-              className="comment-textarea"
-              placeholder="댓글을 입력하세요..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              required
-          ></textarea>
+                    <textarea
+                        className="comment-textarea"
+                        placeholder="댓글을 입력하세요..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        required
+                    ></textarea>
                     <div className="comment-form-actions">
                         <input
                             type="file"
@@ -115,12 +109,12 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                     <li key={comment.commentId} className="comment-item">
                         {editingCommentId === comment.commentId ? (
                             <form onSubmit={(e) => handleUpdateSubmit(e, comment.commentId)}>
-                <textarea
-                    className="comment-textarea"
-                    value={editingContent}
-                    onChange={(e) => setEditingContent(e.target.value)}
-                    required
-                />
+                                <textarea
+                                    className="comment-textarea"
+                                    value={editingContent}
+                                    onChange={(e) => setEditingContent(e.target.value)}
+                                    required
+                                />
                                 <button type="submit">저장</button>
                                 <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
                             </form>
@@ -132,7 +126,8 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                                 <p className="comment-content">{comment.content}</p>
                                 {comment.imageUrl && (
                                     <img
-                                        src={`/images/${comment.imageUrl}`}
+                                        // ✅✅✅ 이 부분의 경로를 백엔드 서버 주소에 맞게 수정 ✅✅✅
+                                        src={`http://localhost:8080/upload/${comment.imageUrl}`}
                                         alt="댓글 이미지"
                                         className="comment-image"
                                         style={{ maxWidth: "200px" }}
@@ -141,13 +136,15 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                                 <div className="comment-date">
                                     {new Date(comment.createdAt).toLocaleString()}
                                 </div>
-                                <div className="comment-actions">
-                                    <button onClick={() => {
-                                        setEditingCommentId(comment.commentId);
-                                        setEditingContent(comment.content);
-                                    }}>수정</button>
-                                    <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
-                                </div>
+                                {user && user.userId === comment.userId && (
+                                    <div className="comment-actions">
+                                        <button onClick={() => {
+                                            setEditingCommentId(comment.commentId);
+                                            setEditingContent(comment.content);
+                                        }}>수정</button>
+                                        <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </li>
