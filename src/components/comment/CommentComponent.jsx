@@ -8,16 +8,26 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const [imageFile, setImageFile] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
-
     const { user } = useAuth();
+
+    // ✅ 1. 로딩과 에러 상태를 위한 state 추가
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
+                // ✅ 2. API 호출 직전에 로딩 상태를 true로 설정
+                setLoading(true);
+                setError(null);
                 const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
                 console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
+                setError("댓글을 불러오지 못했습니다.");
+            } finally {
+                // ✅ 3. API 호출이 끝나면(성공/실패 모두) 로딩 상태를 false로 설정
+                setLoading(false);
             }
         };
         fetchComments();
@@ -104,52 +114,61 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             )}
 
             <h3 className="comment-title" style={{ marginTop: '40px' }}>댓글 목록</h3>
-            <ul className="comment-list">
-                {comments.map((comment) => (
-                    <li key={comment.commentId} className="comment-item">
-                        {editingCommentId === comment.commentId ? (
-                            <form onSubmit={(e) => handleUpdateSubmit(e, comment.commentId)}>
-                                <textarea
-                                    className="comment-textarea"
-                                    value={editingContent}
-                                    onChange={(e) => setEditingContent(e.target.value)}
-                                    required
-                                />
-                                <button type="submit">저장</button>
-                                <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
-                            </form>
-                        ) : (
-                            <div>
-                                <div className="comment-author">
-                                    <strong>사용자 ID: {comment.userId}</strong>
-                                </div>
-                                <p className="comment-content">{comment.content}</p>
-                                {comment.imageUrl && (
-                                    <img
-                                        // ✅✅✅ 이 부분의 경로를 백엔드 서버 주소에 맞게 수정 ✅✅✅
-                                        src={`http://localhost:8080/upload/${comment.imageUrl}`}
-                                        alt="댓글 이미지"
-                                        className="comment-image"
-                                        style={{ maxWidth: "200px" }}
-                                    />
-                                )}
-                                <div className="comment-date">
-                                    {new Date(comment.createdAt).toLocaleString()}
-                                </div>
-                                {user && user.userId === comment.userId && (
-                                    <div className="comment-actions">
-                                        <button onClick={() => {
-                                            setEditingCommentId(comment.commentId);
-                                            setEditingContent(comment.content);
-                                        }}>수정</button>
-                                        <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
+
+            {/* ✅ 4. 로딩 및 에러 상태에 따라 다른 UI를 보여주도록 수정 */}
+            {loading && <div>댓글을 불러오는 중...</div>}
+            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {!loading && !error && (
+                <ul className="comment-list">
+                    {comments.length > 0 ? (
+                        comments.map((comment) => (
+                            <li key={comment.commentId} className="comment-item">
+                                {editingCommentId === comment.commentId ? (
+                                    <form onSubmit={(e) => handleUpdateSubmit(e, comment.commentId)}>
+                                        <textarea
+                                            className="comment-textarea"
+                                            value={editingContent}
+                                            onChange={(e) => setEditingContent(e.target.value)}
+                                            required
+                                        />
+                                        <button type="submit">저장</button>
+                                        <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
+                                    </form>
+                                ) : (
+                                    <div>
+                                        <div className="comment-author">
+                                            <strong>사용자 ID: {comment.userId}</strong>
+                                        </div>
+                                        <p className="comment-content">{comment.content}</p>
+                                        {comment.imageUrl && (
+                                            <img
+                                                src={`http://localhost:8080/upload/${comment.imageUrl}`}
+                                                alt="댓글 이미지"
+                                                className="comment-image"
+                                                style={{ maxWidth: "200px" }}
+                                            />
+                                        )}
+                                        <div className="comment-date">
+                                            {new Date(comment.createdAt).toLocaleString()}
+                                        </div>
+                                        {user && user.userId === comment.userId && (
+                                            <div className="comment-actions">
+                                                <button onClick={() => {
+                                                    setEditingCommentId(comment.commentId);
+                                                    setEditingContent(comment.content);
+                                                }}>수정</button>
+                                                <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+                            </li>
+                        ))
+                    ) : (
+                        <p>아직 댓글이 없습니다.</p>
+                    )}
+                </ul>
+            )}
         </div>
     );
 };
