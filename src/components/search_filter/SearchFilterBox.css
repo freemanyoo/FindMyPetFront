@@ -6,6 +6,8 @@
     margin-bottom: 24px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 60%;
+    margin: 0 auto 24px;
 }
 
 .search-main-row {
