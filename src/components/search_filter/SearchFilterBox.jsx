@@ -250,7 +250,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
                     <div className="filter-row">
                         <div className="status-toggle-group">
-                            <label>검색 상태</label>
+                            <label>상태</label>
                             <div className="toggle-buttons">
                                 <button
                                     className={`toggle-btn ${searchCriteria.isFound === null ? 'active' : ''}`}
@@ -262,13 +262,13 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                     className={`toggle-btn ${searchCriteria.isFound === false ? 'active' : ''}`}
                                     onClick={() => toggleFoundStatus(false)}
                                 >
-                                    검색중
+                                    찾는중
                                 </button>
                                 <button
                                     className={`toggle-btn ${searchCriteria.isFound === true ? 'active' : ''}`}
                                     onClick={() => toggleFoundStatus(true)}
                                 >
-                                    검색완료
+                                    찾기완료
                                 </button>
                             </div>
                         </div>
