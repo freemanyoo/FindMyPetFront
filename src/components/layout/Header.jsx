@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-const Header = ({ isLoggedIn, userInfo, handleLogout }) => {
+const Header = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
 
-  const onLogout = () => {
-    handleLogout();
-    navigate('/login'); // Redirect to login page after logout
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Redirect to home page after logout
   };
 
   return (
@@ -17,14 +19,14 @@ const Header = ({ isLoggedIn, userInfo, handleLogout }) => {
           찾아줘요
         </Link>
         <nav className="nav-buttons">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <>
-              <span className="user-name">환영합니다, {userInfo?.name}님!</span>
+              <span className="user-name">환영합니다, {user?.name}님!</span>
               <Link to="/profile" className="btn btn-outline">
                 <i className="fas fa-user"></i>
                 마이페이지
               </Link>
-              <button onClick={onLogout} className="btn btn-primary">
+              <button onClick={handleLogout} className="btn btn-primary">
                 <i className="fas fa-sign-out-alt"></i>
                 로그아웃
               </button>
