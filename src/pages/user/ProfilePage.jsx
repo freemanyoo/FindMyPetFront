@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../util/axiosInstance';
+import { useAuth } from '../../context/AuthContext';
 
-function ProfilePage({ userInfo }) {
-  const [localUserInfo, setLocalUserInfo] = useState(userInfo);
-  const [loading, setLoading] = useState(false); // userInfo is passed as prop, so no initial loading
+function ProfilePage() {
+  const { user } = useAuth(); // Get user from AuthContext
+  const [localUserInfo, setLocalUserInfo] = useState(user);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({
-    name: localUserInfo?.name || '',
-    phoneNumber: localUserInfo?.phoneNumber || '',
-    email: localUserInfo?.email || '',
-    address: localUserInfo?.address || '',
+    name: user?.name || '',
+    phoneNumber: user?.phoneNumber || '',
+    email: user?.email || '',
+    address: user?.address || '',
   });
   const [passwordChangeData, setPasswordChangeData] = useState({
     currentPassword: '',
@@ -19,18 +21,18 @@ function ProfilePage({ userInfo }) {
   const [passwordChangeError, setPasswordChangeError] = useState('');
   const [passwordChangeSuccess, setPasswordChangeSuccess] = useState('');
 
-  // If userInfo prop changes, update local state and form data
+  // If user from context changes, update local state and form data
   useEffect(() => {
-    if (userInfo) {
-      setLocalUserInfo(userInfo);
+    if (user) {
+      setLocalUserInfo(user);
       setEditFormData({
-        name: userInfo.name,
-        phoneNumber: userInfo.phoneNumber,
-        email: userInfo.email,
-        address: userInfo.address,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        address: user.address,
       });
     }
-  }, [userInfo]);
+  }, [user]);
 
   // Remove initial fetch, as userInfo is passed as prop
   // useEffect(() => {

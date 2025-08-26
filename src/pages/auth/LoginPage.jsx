@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../util/axiosInstance';
+import { useAuth } from '../../context/AuthContext';
 
-function LoginPage({ onLoginSuccess }) {
+function LoginPage() {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,8 +18,8 @@ function LoginPage({ onLoginSuccess }) {
       const response = await axiosInstance.post('/auth/login', { loginId, password });
       if (response.data.success) {
         console.log('Login successful:', response.data);
-        // Call the onLoginSuccess prop to update App.jsx state and localStorage
-        onLoginSuccess(response.data.data.accessToken, response.data.data.refreshToken, response.data.data.user);
+        const { user, accessToken, refreshToken } = response.data.data;
+        login(user, accessToken, refreshToken);
         navigate('/'); // Redirect to home page or dashboard
       } else {
         setError(response.data.error.message || '로그인 실패');
