@@ -34,32 +34,33 @@ function ProfilePage() {
     }
   }, [user]);
 
-  // Remove initial fetch, as userInfo is passed as prop
-  // useEffect(() => {
-  //   const fetchUserInfo = async () => {
-  //     try {
-  //       const response = await axiosInstance.get('/users/me');
-  //       if (response.data.success) {
-  //         setUserInfo(response.data.data);
-  //         setEditFormData({
-  //           name: response.data.data.name,
-  //           phoneNumber: response.data.data.phoneNumber,
-  //           email: response.data.data.email,
-  //           address: response.data.data.address,
-  //         });
-  //       } else {
-  //         setError(response.data.error.message || '사용자 정보를 불러오는데 실패했습니다.');
-  //       }
-  //     } catch (err) {
-  //       console.error('Fetch user info error:', err);
-  //       setError(err.response?.data?.error?.message || '서버 오류가 발생했습니다.');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+    // Fetch user info on component mount
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get('/users/me');
+        if (response.data.success) {
+          setLocalUserInfo(response.data.data);
+          setEditFormData({
+            name: response.data.data.name,
+            phoneNumber: response.data.data.phoneNumber,
+            email: response.data.data.email,
+            address: response.data.data.address,
+          });
+        } else {
+          setError(response.data.error.message || '사용자 정보를 불러오는데 실패했습니다.');
+        }
+      } catch (err) {
+        console.error('Fetch user info error:', err);
+        setError(err.response?.data?.error?.message || '서버 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchUserInfo();
-  // }, []);
+    fetchUserInfo();
+  }, []); // Empty dependency array means it runs once on mount
 
   const handleEditChange = (e) => {
     const { id, value } = e.target;
