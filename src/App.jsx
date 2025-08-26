@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
+import SearchFilterPage from './pages/search_filter/SearchFilterPage';
+
 
 import './App.css';
 
@@ -15,6 +17,7 @@ function App() {
         <Route path="/board/shelter" element={<div>Shelter Board Page</div>} />
         <Route path="/login" element={<div>Login Page</div>} />
         <Route path="/register" element={<div>Register Page</div>} />
+          <Route path="/find-pets" element={<SearchFilterPage />} />
       </Route>
     </Routes>
   );
