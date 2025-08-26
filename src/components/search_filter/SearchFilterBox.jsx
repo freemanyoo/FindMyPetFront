@@ -16,29 +16,25 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
     });
 
     const [filterOptions, setFilterOptions] = useState({
-        animalTypes: [],
-        genders: [],
-        cityProvinces: [],
-        districts: [],
+        // 기존 UI 유지: 필드 이름 그대로 두되, 백엔드 응답을 유연하게 매핑
+        animalTypes: [],     // = animalCategories
+        genders: [],         // (없는 경우 빈 배열)
+        cityProvinces: [],   // (없는 경우 빈 배열)
+        districts: [],       // (없는 경우 빈 배열)
         breeds: []
     });
 
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // 필터 옵션 로드
-    useEffect(() => {
-        loadFilterOptions();
-    }, []);
-
-    // 시도 변경 시 군구 목록 업데이트
+    useEffect(() => { loadFilterOptions(); }, []);
     useEffect(() => {
         if (searchCriteria.cityProvince) {
+            // 백엔드에 도시/군구 API가 없을 수 있으므로 실패해도 무시
             loadDistricts(searchCriteria.cityProvince);
             setSearchCriteria(prev => ({ ...prev, district: '' }));
         }
     }, [searchCriteria.cityProvince]);
 
-    // 동물 타입 변경 시 품종 목록 업데이트
     useEffect(() => {
         if (searchCriteria.animalType) {
             loadBreeds(searchCriteria.animalType);
@@ -48,36 +44,55 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
     const loadFilterOptions = async () => {
         try {
-            const response = await fetch('/api/find-pets/filter-options');
-            const data = await response.json();
+            // 기존 엔드포인트 유지 시도
+            const resp = await fetch('/api/find-pets/filter-options');
+            if (!resp.ok) throw new Error('filter-options not available');
+            const data = await resp.json();
+
+            // 여러 형태를 유연하게 수용
+            const animalCategories =
+                data.animalCategories ||
+                data.animalTypes ||
+                []; // 문자열 배열 또는 {value,label} 배열 모두 허용
+
+            const normalizedTypes = animalCategories.map((t) =>
+                typeof t === 'string' ? { value: t, label: t } : t
+            );
+
             setFilterOptions(prev => ({
                 ...prev,
-                animalTypes: data.animalTypes || [],
+                animalTypes: normalizedTypes,
                 genders: data.genders || [],
-                cityProvinces: data.cityProvinces || []
+                cityProvinces: data.cityProvinces || [] // 없으면 빈 배열
             }));
-        } catch (error) {
-            console.error('필터 옵션 로드 실패:', error);
+        } catch (e) {
+            console.warn('필터 옵션 로드 실패(무시 가능):', e);
+            // 실패해도 UI 사용에는 지장 없도록 기본값 유지
         }
     };
 
     const loadDistricts = async (cityProvince) => {
         try {
-            const response = await fetch(`/api/find-pets/districts?cityProvince=${encodeURIComponent(cityProvince)}`);
-            const data = await response.json();
+            const resp = await fetch(`/api/find-pets/districts?cityProvince=${encodeURIComponent(cityProvince)}`);
+            if (!resp.ok) throw new Error('districts not available');
+            const data = await resp.json();
             setFilterOptions(prev => ({ ...prev, districts: data || [] }));
-        } catch (error) {
-            console.error('군구 목록 로드 실패:', error);
+        } catch (e) {
+            // 없으면 무시
+            setFilterOptions(prev => ({ ...prev, districts: [] }));
         }
     };
 
     const loadBreeds = async (animalType) => {
         try {
-            const response = await fetch(`/api/find-pets/breeds?animalType=${animalType}`);
-            const data = await response.json();
+            // animalType -> animalCategory 로 전달
+            const resp = await fetch(`/api/find-pets/breeds?animalCategory=${encodeURIComponent(animalType)}`);
+            if (!resp.ok) throw new Error('breeds not available');
+            const data = await resp.json();
             setFilterOptions(prev => ({ ...prev, breeds: data || [] }));
-        } catch (error) {
-            console.error('품종 목록 로드 실패:', error);
+        } catch (e) {
+            console.warn('품종 목록 로드 실패(무시 가능):', e);
+            setFilterOptions(prev => ({ ...prev, breeds: [] }));
         }
     };
 
@@ -181,7 +196,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                 className="select-input"
                             >
                                 <option value="">전체</option>
-                                {filterOptions.cityProvinces.map(city => (
+                                {filterOptions.cityProvinces.map((city) => (
                                     <option key={city} value={city}>{city}</option>
                                 ))}
                             </select>
@@ -196,7 +211,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                 disabled={!searchCriteria.cityProvince}
                             >
                                 <option value="">전체</option>
-                                {filterOptions.districts.map(district => (
+                                {filterOptions.districts.map((district) => (
                                     <option key={district} value={district}>{district}</option>
                                 ))}
                             </select>
@@ -212,9 +227,13 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                 className="select-input"
                             >
                                 <option value="">전체</option>
-                                {filterOptions.animalTypes.map(type => (
-                                    <option key={type.value} value={type.value}>{type.label}</option>
-                                ))}
+                                {filterOptions.animalTypes.map((type) =>
+                                    typeof type === 'string' ? (
+                                        <option key={type} value={type}>{type}</option>
+                                    ) : (
+                                        <option key={type.value} value={type.value}>{type.label}</option>
+                                    )
+                                )}
                             </select>
                         </div>
 
@@ -227,7 +246,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                 disabled={!searchCriteria.animalType}
                             >
                                 <option value="">전체</option>
-                                {filterOptions.breeds.map(breed => (
+                                {filterOptions.breeds.map((breed) => (
                                     <option key={breed} value={breed}>{breed}</option>
                                 ))}
                             </select>
@@ -241,9 +260,13 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                                 className="select-input"
                             >
                                 <option value="">전체</option>
-                                {filterOptions.genders.map(gender => (
-                                    <option key={gender.value} value={gender.value}>{gender.label}</option>
-                                ))}
+                                {filterOptions.genders.map((gender) =>
+                                    typeof gender === 'string' ? (
+                                        <option key={gender} value={gender}>{gender}</option>
+                                    ) : (
+                                        <option key={gender.value} value={gender.value}>{gender.label}</option>
+                                    )
+                                )}
                             </select>
                         </div>
                     </div>
