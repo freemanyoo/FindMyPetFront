@@ -6,6 +6,7 @@ function RegisterPage() {
   const [formData, setFormData] = useState({
     loginId: '',
     password: '',
+    passwordConfirm: '',
     name: '',
     phoneNumber: '',
     email: '',
@@ -26,8 +27,21 @@ function RegisterPage() {
     e.preventDefault();
     setError(''); // Clear previous errors
 
+    // Validation
+    if (formData.password.length < 8) {
+      setError('비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
+    if (formData.password !== formData.passwordConfirm) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
     try {
-      const response = await axiosInstance.post('/auth/signup', formData);
+      // Exclude passwordConfirm from the data sent to the server
+      const { passwordConfirm, ...submissionData } = formData;
+      const response = await axiosInstance.post('/auth/signup', submissionData);
+
       if (response.data.success) {
         console.log('Registration successful:', response.data);
         alert('회원가입이 완료되었습니다. 로그인 해주세요.');
@@ -50,8 +64,12 @@ function RegisterPage() {
           <input type="text" id="loginId" value={formData.loginId} onChange={handleChange} required />
         </div>
         <div className="form-group">
-          <label htmlFor="password">비밀번호:</label>
+          <label htmlFor="password">비밀번호 (8자 이상):</label>
           <input type="password" id="password" value={formData.password} onChange={handleChange} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="passwordConfirm">비밀번호 확인:</label>
+          <input type="password" id="passwordConfirm" value={formData.passwordConfirm} onChange={handleChange} required />
         </div>
         <div className="form-group">
           <label htmlFor="name">이름:</label>
