@@ -27,4 +27,54 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+// Response Interceptor
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        // If the error is 401 Unauthorized and it's not a retry attempt yet
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true; // Mark as retry attempt
+
+            try {
+                const refreshToken = localStorage.getItem('refreshToken');
+                if (!refreshToken) {
+                    // No refresh token, redirect to login
+                    window.location.href = '/login';
+                    return Promise.reject(error);
+                }
+
+                // Call backend to refresh token
+                // The backend endpoint is /api/auth/refresh and expects { refreshToken: "..." }
+                const response = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken: refreshToken });
+                const newAccessToken = response.data.data.accessToken; // Assuming response structure { success: true, data: { accessToken: "..." } }
+
+                // Update tokens in localStorage
+                localStorage.setItem('accessToken', newAccessToken);
+                // Note: The backend's refreshAccessToken currently returns only newAccessToken, not a new refreshToken.
+                // If the backend also returned a new refresh token, we would update it here:
+                // localStorage.setItem('refreshToken', newRefreshToken);
+
+                // Update the original request's header with the new token
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+                // Retry the original request
+                return axiosInstance(originalRequest);
+
+            } catch (refreshError) {
+                console.error('Token refresh failed:', refreshError);
+                // Clear tokens and redirect to login on refresh failure
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;

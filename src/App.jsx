@@ -20,10 +20,10 @@ import './App.css';
 
 // AuthContext와 연동된 AdminRoute
 const AdminRoute = () => {
-    const { user } = useAuth(); // AuthContext에서 사용자 정보 가져오기
+    const { userRole } = useAuth(); // AuthContext에서 사용자 정보 가져오기
 
     // 사용자 정보가 없거나 role이 'ADMIN'이 아니면 로그인 페이지로 리디렉션
-    if (!user || user.role !== 'ADMIN') {
+    if (!userRole || userRole !== 'ADMIN') {
         return <Navigate to="/login" replace />;
     }
 
