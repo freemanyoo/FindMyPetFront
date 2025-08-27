@@ -123,6 +123,7 @@
     - animal_age (INT)
     - animal_category (VARCHAR)  // 예: "개", "고양이"
     - animal_breed (VARCHAR)     // 예: "말티즈", "샴"
+    - animal_gender   // 예: "수컷", "암컷", "모름"
     - lost_time (DATETIME)
     - latitude (DECIMAL(10,7))
     - longitude (DECIMAL(10,7))

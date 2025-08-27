@@ -11,6 +11,66 @@ function ProfilePage() {
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
+function ProfilePage() {
+  const { user } = useAuth(); // Get user from AuthContext
+  const [localUserInfo, setLocalUserInfo] = useState(user);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: user?.name || '',
+    phoneNumber: user?.phoneNumber || '',
+    email: user?.email || '',
+    address: user?.address || '',
+  });
+  const [passwordChangeData, setPasswordChangeData] = useState({
+    currentPassword: '',
+    newPassword: '',
+  });
+  const [passwordChangeError, setPasswordChangeError] = useState('');
+  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState('');
+
+  // If user from context changes, update local state and form data
+  useEffect(() => {
+    if (user) {
+      setLocalUserInfo(user);
+      setEditFormData({
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        address: user.address,
+      });
+    }
+  }, [user]);
+
+    // Fetch user info on component mount
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.get('/users/me');
+        if (response.data.success) {
+          setLocalUserInfo(response.data.data);
+          setEditFormData({
+            name: response.data.data.name,
+            phoneNumber: response.data.data.phoneNumber,
+            email: response.data.data.email,
+            address: response.data.data.address,
+          });
+        } else {
+          setError(response.data.error.message || '사용자 정보를 불러오는데 실패했습니다.');
+        }
+      } catch (err) {
+        console.error('Fetch user info error:', err);
+        setError(err.response?.data?.error?.message || '서버 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []); // Empty dependency array means it runs once on mount
+
     const [editFormData, setEditFormData] = useState({ name: '', phoneNumber: '', address: '' });
     const [passwordChangeData, setPasswordChangeData] = useState({ currentPassword: '', newPassword: '' });
     const [passwordChangeError, setPasswordChangeError] = useState('');
