@@ -3,6 +3,7 @@ import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
 import './ProfilePage.css'; // ✅ CSS 파일 import
 
+// 마이페이지, 정보수정
 function ProfilePage() {
     const { user, login } = useAuth();
     const [localUserInfo, setLocalUserInfo] = useState(user);
