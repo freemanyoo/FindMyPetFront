@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
+import './ProfilePage.css';
 
 function ProfilePage() {
   const { user } = useAuth(); // Get user from AuthContext
@@ -133,7 +134,7 @@ function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <h2>내 정보</h2>
+      <h2></h2>
       {!isEditing ? (
         <div>
           <p><strong>아이디:</strong> {localUserInfo.loginId}</p>

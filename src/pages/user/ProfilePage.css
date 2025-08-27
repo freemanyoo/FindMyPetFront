@@ -1,0 +1,216 @@
+/* =========================
+   ProfilePage.css
+   - RegisterPage.css 톤과 통일
+   - 한 화면(100vh) 카드 중앙 배치
+   - 라벨/값, 라벨/입력 줄맞춤 (Grid)
+   ========================= */
+
+/* 전체 레이아웃: 앱 배경(App.css)을 그대로 사용하고, 중앙 배치만 담당 */
+.profile-page, .profile-page * { box-sizing: border-box; }
+.profile-page {
+    min-height: 100vh;                 /* 한 화면 */
+    display: grid;
+    place-items: center;               /* 수평/수직 가운데 */
+    padding: 24px;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    color: #0f172a;
+}
+
+/* 카드: RegisterPage와 동일한 톤(화이트 글라스) */
+.profile-card {
+    width: 100%;
+    max-width: 720px;                  /* 전체 카드 너비 */
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(15,23,42,0.06);
+    border-radius: 18px;
+    padding: 28px 26px;
+    box-shadow: 0 12px 28px rgba(2,6,23,0.08), 0 2px 10px rgba(2,6,23,0.06);
+}
+
+/* 제목 공통 */
+.profile-card h2 {
+    margin: 0 0 18px;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    text-align: center;
+    color: #111827;
+}
+
+/* 구분선 */
+.profile-divider {
+    height: 1px;
+    background: rgba(15,23,42,0.08);
+    margin: 20px 0;
+    border: 0;
+}
+
+/* ===== 1) 정보 보기 섹션 ===== */
+
+/* 라벨:값 두 칸 그리드로 줄맞춤 */
+.profile-info {
+    display: grid;
+    grid-template-columns: 140px 1fr; /* 라벨 폭 고정, 값은 늘어남 */
+    row-gap: 8px;
+    column-gap: 12px;
+    margin-bottom: 12px;
+}
+.profile-info .kv-label {
+    font-weight: 700;
+    color: #374151;
+    text-align: right;                 /* 라벨 우측 정렬 → 줄맞춤 */
+}
+.profile-info .kv-value {
+    color: #1f2937;
+    word-break: break-word;
+}
+
+/* 정보 수정 버튼(보기모드) */
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.profile-card .btn {
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; text-align: center;
+}
+.profile-card .btn.btn-primary {
+    /* App.css의 버튼 컬러와 조화되게: 내부 텍스트 중앙 보정 */
+    display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ===== 2) 편집 모드 폼 ===== */
+
+.profile-form {
+    display: grid;
+    grid-template-columns: 140px 1fr;  /* 라벨/인풋 줄맞춤 */
+    row-gap: 12px;
+    column-gap: 12px;
+}
+.profile-form .form-group {
+    display: contents;                 /* 각 라벨/인풋을 그리드에 직접 배치 */
+}
+.profile-form label {
+    align-self: center;
+    justify-self: end;                 /* 라벨 오른쪽 끝 정렬 */
+    font-size: 13px;
+    color: #4b5563;
+    font-weight: 700;
+    padding-right: 4px;
+}
+.profile-form input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fff;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+}
+.profile-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
+    transform: translateY(-1px);
+}
+
+/* 편집 모드 버튼 두 개(저장/취소) */
+.profile-edit-actions {
+    grid-column: 1 / -1;              /* 두 칸 모두 차지 → 중앙 배치 */
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+/* ===== 3) 비밀번호 변경 섹션 ===== */
+
+.profile-password h3 {
+    margin: 0 0 14px;
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    color: #111827;
+}
+
+.profile-password form {
+    display: grid;
+    grid-template-columns: 180px 1fr; /* 비번 폼은 라벨 폭을 조금 넉넉히 */
+    row-gap: 12px;
+    column-gap: 12px;
+}
+
+.profile-password .form-group {
+    display: contents;
+}
+.profile-password label {
+    align-self: center;
+    justify-self: end;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+    padding-right: 4px;
+}
+.profile-password input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fff;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+}
+.profile-password input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
+    transform: translateY(-1px);
+}
+
+.profile-password-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+/* 메시지 */
+.profile-card .error-message,
+.profile-card .success-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 6px;
+    font-size: 13px;
+}
+.profile-card .error-message { color: #b91c1c; }
+.profile-card .success-message { color: #065f46; }
+
+/* ===== 반응형 ===== */
+@media (max-width: 640px) {
+    .profile-info,
+    .profile-form,
+    .profile-password form {
+        grid-template-columns: 1fr;      /* 모바일: 1열 스택 */
+    }
+    .profile-info .kv-label,
+    .profile-form label,
+    .profile-password label {
+        justify-self: start;
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 4px;
+    }
+}
+
+/* 작은 높이에서 카드 살짝 축소 → 한 화면 유지 */
+@media (max-height: 740px) {
+    .profile-card { transform: scale(0.98); transform-origin: center top; }
+}
+@media (max-height: 680px) {
+    .profile-card { transform: scale(0.96); }
+}
