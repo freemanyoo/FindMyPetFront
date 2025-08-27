@@ -7,8 +7,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
         author: '',
         lostDateFrom: '',
         lostDateTo: '',
-        cityProvince: '',
-        district: '',
+        location: '', // 👈 [수정] cityProvince와 district를 location 하나로 통합
         animalType: '',
         breed: '',
         gender: '',
@@ -16,24 +15,17 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
     });
 
     const [filterOptions, setFilterOptions] = useState({
-        // 기존 UI 유지: 필드 이름 그대로 두되, 백엔드 응답을 유연하게 매핑
-        animalTypes: [],     // = animalCategories
-        genders: [],         // (없는 경우 빈 배열)
-        cityProvinces: [],   // (없는 경우 빈 배열)
-        districts: [],       // (없는 경우 빈 배열)
+        animalTypes: [],
+        genders: [],
         breeds: []
+        // 👈 [제거] cityProvinces, districts 제거
     });
 
     const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => { loadFilterOptions(); }, []);
-    useEffect(() => {
-        if (searchCriteria.cityProvince) {
-            // 백엔드에 도시/군구 API가 없을 수 있으므로 실패해도 무시
-            loadDistricts(searchCriteria.cityProvince);
-            setSearchCriteria(prev => ({ ...prev, district: '' }));
-        }
-    }, [searchCriteria.cityProvince]);
+
+    // 👈 [제거] cityProvince에 따라 district를 로드하던 useEffect 제거
 
     useEffect(() => {
         if (searchCriteria.animalType) {
@@ -44,48 +36,27 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
     const loadFilterOptions = async () => {
         try {
-            // 기존 엔드포인트 유지 시도
             const resp = await fetch('/api/find-pets/filter-options');
             if (!resp.ok) throw new Error('filter-options not available');
             const data = await resp.json();
-
-            // 여러 형태를 유연하게 수용
-            const animalCategories =
-                data.animalCategories ||
-                data.animalTypes ||
-                []; // 문자열 배열 또는 {value,label} 배열 모두 허용
-
+            const animalCategories = data.animalCategories || data.animalTypes || [];
             const normalizedTypes = animalCategories.map((t) =>
                 typeof t === 'string' ? { value: t, label: t } : t
             );
-
             setFilterOptions(prev => ({
                 ...prev,
                 animalTypes: normalizedTypes,
                 genders: data.genders || [],
-                cityProvinces: data.cityProvinces || [] // 없으면 빈 배열
             }));
         } catch (e) {
             console.warn('필터 옵션 로드 실패(무시 가능):', e);
-            // 실패해도 UI 사용에는 지장 없도록 기본값 유지
         }
     };
 
-    const loadDistricts = async (cityProvince) => {
-        try {
-            const resp = await fetch(`/api/find-pets/districts?cityProvince=${encodeURIComponent(cityProvince)}`);
-            if (!resp.ok) throw new Error('districts not available');
-            const data = await resp.json();
-            setFilterOptions(prev => ({ ...prev, districts: data || [] }));
-        } catch (e) {
-            // 없으면 무시
-            setFilterOptions(prev => ({ ...prev, districts: [] }));
-        }
-    };
+    // 👈 [제거] loadDistricts 함수 제거
 
     const loadBreeds = async (animalType) => {
         try {
-            // animalType -> animalCategory 로 전달
             const resp = await fetch(`/api/find-pets/breeds?animalCategory=${encodeURIComponent(animalType)}`);
             if (!resp.ok) throw new Error('breeds not available');
             const data = await resp.json();
@@ -112,8 +83,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
             author: '',
             lostDateFrom: '',
             lostDateTo: '',
-            cityProvince: '',
-            district: '',
+            location: '', // 👈 [수정] location으로 초기화
             animalType: '',
             breed: '',
             gender: '',
@@ -131,6 +101,7 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
     return (
         <div className="search-filter-container">
+            {/* 상단 기본 검색창 및 버튼은 그대로 유지 */}
             <div className="search-main-row">
                 <div className="search-input-group">
                     <input
@@ -148,12 +119,8 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
                         className="search-input"
                     />
                 </div>
-
                 <div className="search-buttons">
-                    <button
-                        className="btn btn-filter"
-                        onClick={() => setIsExpanded(!isExpanded)}
-                    >
+                    <button className="btn btn-filter" onClick={() => setIsExpanded(!isExpanded)}>
                         <span className="filter-icon">⚙</span>
                         필터 {isExpanded ? '접기' : '펼치기'}
                     </button>
@@ -166,141 +133,72 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
             {isExpanded && (
                 <div className="filter-expanded-section">
+                    {/* 분실날짜 필터는 그대로 유지 */}
                     <div className="filter-row">
                         <div className="filter-group">
                             <label>분실날짜</label>
                             <div className="date-range">
-                                <input
-                                    type="date"
-                                    value={searchCriteria.lostDateFrom}
-                                    onChange={(e) => handleInputChange('lostDateFrom', e.target.value)}
-                                    className="date-input"
-                                />
+                                <input type="date" value={searchCriteria.lostDateFrom} onChange={(e) => handleInputChange('lostDateFrom', e.target.value)} className="date-input" />
                                 <span className="date-separator">~</span>
-                                <input
-                                    type="date"
-                                    value={searchCriteria.lostDateTo}
-                                    onChange={(e) => handleInputChange('lostDateTo', e.target.value)}
-                                    className="date-input"
-                                />
+                                <input type="date" value={searchCriteria.lostDateTo} onChange={(e) => handleInputChange('lostDateTo', e.target.value)} className="date-input" />
                             </div>
                         </div>
                     </div>
 
+                    {/* 👇 [수정] 시도/시군구 드롭다운을 하나의 키워드 검색창으로 변경 */}
                     <div className="filter-row">
-                        <div className="filter-group">
-                            <label>시도</label>
-                            <select
-                                value={searchCriteria.cityProvince}
-                                onChange={(e) => handleInputChange('cityProvince', e.target.value)}
-                                className="select-input"
-                            >
-                                <option value="">전체</option>
-                                {filterOptions.cityProvinces.map((city) => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="filter-group">
-                            <label>시군구</label>
-                            <select
-                                value={searchCriteria.district}
-                                onChange={(e) => handleInputChange('district', e.target.value)}
-                                className="select-input"
-                                disabled={!searchCriteria.cityProvince}
-                            >
-                                <option value="">전체</option>
-                                {filterOptions.districts.map((district) => (
-                                    <option key={district} value={district}>{district}</option>
-                                ))}
-                            </select>
+                        <div className="filter-group" style={{ flexGrow: 1 }}>
+                            <label>분실지역 검색</label>
+                            <input
+                                type="text"
+                                placeholder="지역 키워드 입력 (예: 부산진구)"
+                                value={searchCriteria.location}
+                                onChange={(e) => handleInputChange('location', e.target.value)}
+                                className="search-input"
+                            />
                         </div>
                     </div>
 
+                    {/* 축종/품종/성별 필터는 그대로 유지 */}
                     <div className="filter-row">
                         <div className="filter-group">
                             <label>축종</label>
-                            <select
-                                value={searchCriteria.animalType}
-                                onChange={(e) => handleInputChange('animalType', e.target.value)}
-                                className="select-input"
-                            >
+                            <select value={searchCriteria.animalType} onChange={(e) => handleInputChange('animalType', e.target.value)} className="select-input">
                                 <option value="">전체</option>
-                                {filterOptions.animalTypes.map((type) =>
-                                    typeof type === 'string' ? (
-                                        <option key={type} value={type}>{type}</option>
-                                    ) : (
-                                        <option key={type.value} value={type.value}>{type.label}</option>
-                                    )
-                                )}
+                                {filterOptions.animalTypes.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
                             </select>
                         </div>
-
                         <div className="filter-group">
                             <label>품종</label>
-                            <select
-                                value={searchCriteria.breed}
-                                onChange={(e) => handleInputChange('breed', e.target.value)}
-                                className="select-input"
-                                disabled={!searchCriteria.animalType}
-                            >
+                            <select value={searchCriteria.breed} onChange={(e) => handleInputChange('breed', e.target.value)} className="select-input" disabled={!searchCriteria.animalType}>
                                 <option value="">전체</option>
-                                {filterOptions.breeds.map((breed) => (
-                                    <option key={breed} value={breed}>{breed}</option>
-                                ))}
+                                {filterOptions.breeds.map((breed) => <option key={breed} value={breed}>{breed}</option>)}
                             </select>
                         </div>
-
                         <div className="filter-group">
                             <label>성별</label>
-                            <select
-                                value={searchCriteria.gender}
-                                onChange={(e) => handleInputChange('gender', e.target.value)}
-                                className="select-input"
-                            >
+                            <select value={searchCriteria.gender} onChange={(e) => handleInputChange('gender', e.target.value)} className="select-input">
                                 <option value="">전체</option>
-                                {filterOptions.genders.map((gender) =>
-                                    typeof gender === 'string' ? (
-                                        <option key={gender} value={gender}>{gender}</option>
-                                    ) : (
-                                        <option key={gender.value} value={gender.value}>{gender.label}</option>
-                                    )
-                                )}
+                                {filterOptions.genders.map((gender) => <option key={gender.value} value={gender.value}>{gender.label}</option>)}
                             </select>
                         </div>
                     </div>
 
+                    {/* 상태 토글은 그대로 유지 */}
                     <div className="filter-row">
                         <div className="status-toggle-group">
                             <label>상태</label>
                             <div className="toggle-buttons">
-                                <button
-                                    className={`toggle-btn ${searchCriteria.isFound === null ? 'active' : ''}`}
-                                    onClick={() => toggleFoundStatus(null)}
-                                >
-                                    전체
-                                </button>
-                                <button
-                                    className={`toggle-btn ${searchCriteria.isFound === false ? 'active' : ''}`}
-                                    onClick={() => toggleFoundStatus(false)}
-                                >
-                                    찾는중
-                                </button>
-                                <button
-                                    className={`toggle-btn ${searchCriteria.isFound === true ? 'active' : ''}`}
-                                    onClick={() => toggleFoundStatus(true)}
-                                >
-                                    찾기완료
-                                </button>
+                                <button className={`toggle-btn ${searchCriteria.isFound === null ? 'active' : ''}`} onClick={() => toggleFoundStatus(null)}>전체</button>
+                                <button className={`toggle-btn ${searchCriteria.isFound === false ? 'active' : ''}`} onClick={() => toggleFoundStatus(false)}>찾는중</button>
+                                <button className={`toggle-btn ${searchCriteria.isFound === true ? 'active' : ''}`} onClick={() => toggleFoundStatus(true)}>찾기완료</button>
                             </div>
                         </div>
                     </div>
 
+                    {/* 초기화 버튼은 그대로 유지 */}
                     <div className="filter-actions">
-                        <button className="btn btn-reset" onClick={handleReset}>
-                            초기화
-                        </button>
+                        <button className="btn btn-reset" onClick={handleReset}>초기화</button>
                     </div>
                 </div>
             )}
