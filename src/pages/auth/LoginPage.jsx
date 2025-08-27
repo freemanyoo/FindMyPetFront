@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../util/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
+import './LoginPage.css';
 
 function LoginPage() {
   const [loginId, setLoginId] = useState('');
@@ -56,6 +57,7 @@ function LoginPage() {
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="btn btn-primary">로그인</button>
+
       </form>
       <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
     </div>
