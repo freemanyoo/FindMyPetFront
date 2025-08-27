@@ -1,20 +1,29 @@
+
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import Home from './components/Home';
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from "./layouts/MainLayout";
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import ProfilePage from './pages/user/ProfilePage';
+
 import './App.css';
 
 function App() {
-  return (
-    <Router>
-      <Layout>
+    return (
         <Routes>
-          <Route path="/" element={<Home />} />
-          {/* 여기에 다른 라우트를 추가할 수 있습니다. */}
+                <Route path="/" element={<MainLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="login" element={<LoginPage />} />
+                    <Route path="register" element={<RegisterPage />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    {/* Keeping other placeholders for now */}
+                    <Route path="board/missing" element={<div>Missing Board Page</div>} />
+                    <Route path="board/shelter" element={<div>Shelter Board Page</div>} />
+                </Route>
         </Routes>
-      </Layout>
-    </Router>
-  );
+
+    );
 }
 
 export default App;

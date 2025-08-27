@@ -1,0 +1,122 @@
+/* 전체 페이지 배경 */
+.profile-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 카드가 길어질 수 있으므로 상단 정렬 */
+    min-height: calc(100vh - 150px); /* 헤더/푸터 높이를 제외한 전체 높이 */
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 흰색 카드 UI */
+.profile-card {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card h2, .profile-card h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* 정보 표시 영역 */
+.profile-info p {
+    margin-bottom: 12px;
+    font-size: 1rem;
+    color: #555;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+}
+
+.profile-info p strong {
+    color: #333;
+    width: 100px;
+    display: inline-block;
+}
+
+/* 폼 그룹 스타일 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* 메시지 스타일 */
+.error-message {
+    color: #d9534f;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.success-message {
+    color: #5cb85c;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* 버튼 스타일 */
+.btn {
+    display: block; /* 버튼을 한 줄 전체 차지하도록 */
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: #5a67d8;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4c51bf;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 10px; /* 버튼 간 간격 */
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px; /* 버튼 사이 간격 */
+}
