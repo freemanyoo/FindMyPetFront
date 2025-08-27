@@ -8,28 +8,27 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const [imageFile, setImageFile] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
-    const { user } = useAuth();
+    const { user, userRole } = useAuth(); // Get userRole here
 
-    // ✅ 1. 로딩과 에러 상태를 위한 state 추가
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Function to fetch comments (can be called again after delete/update)
+    const fetchComments = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
+            setComments(response.data);
+        } catch (error) {
+            console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
+            setError("댓글을 불러오지 못했습니다.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                // ✅ 2. API 호출 직전에 로딩 상태를 true로 설정
-                setLoading(true);
-                setError(null);
-                const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
-                setComments(response.data);
-            } catch (error) {
-                console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
-                setError("댓글을 불러오지 못했습니다.");
-            } finally {
-                // ✅ 3. API 호출이 끝나면(성공/실패 모두) 로딩 상태를 false로 설정
-                setLoading(false);
-            }
-        };
         fetchComments();
     }, [postId]);
 
@@ -56,11 +55,22 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const handleDelete = async (commentId) => {
         if (window.confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             try {
-                await axiosInstance.delete(`/api/comments/${commentId}`);
-                setComments(comments.filter((comment) => comment.commentId !== commentId));
+                // Determine which delete endpoint to use
+                const deleteEndpoint = userRole === 'ADMIN' ? `/api/admin/comments/${commentId}` : `/api/comments/${commentId}`;
+                
+                const response = await axiosInstance.delete(deleteEndpoint);
+                // Assuming the backend returns success:true or similar for successful deletion
+                // The CommonResponse from backend has success:true/false
+                if (response.data.success) { // Check for success property in response.data
+                    alert("댓글이 성공적으로 삭제되었습니다.");
+                    // Refresh comments after deletion
+                    fetchComments();
+                } else {
+                    alert(`댓글 삭제 실패: ${response.data.message || '알 수 없는 오류'}`);
+                }
             } catch (error) {
                 console.error("댓글 삭제 중 오류가 발생했습니다.", error);
-                alert("댓글 삭제에 실패했습니다.");
+                alert(`댓글 삭제 중 오류 발생: ${error.response?.data?.message || error.message}`);
             }
         }
     };
@@ -115,7 +125,6 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
 
             <h3 className="comment-title" style={{ marginTop: '40px' }}>댓글 목록</h3>
 
-            {/* ✅ 4. 로딩 및 에러 상태에 따라 다른 UI를 보여주도록 수정 */}
             {loading && <div>댓글을 불러오는 중...</div>}
             {error && <div style={{ color: 'red' }}>{error}</div>}
             {!loading && !error && (
@@ -151,15 +160,18 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                                         <div className="comment-date">
                                             {new Date(comment.createdAt).toLocaleString()}
                                         </div>
-                                        {user && user.userId === comment.userId && (
+                                        {/* Show edit/delete buttons if user is author OR if user is ADMIN */}
+                                        {(user && user.userId === comment.userId) || userRole === 'ADMIN' ? (
                                             <div className="comment-actions">
-                                                <button onClick={() => {
-                                                    setEditingCommentId(comment.commentId);
-                                                    setEditingContent(comment.content);
-                                                }}>수정</button>
+                                                {user && user.userId === comment.userId && ( // Only author can edit
+                                                    <button onClick={() => {
+                                                        setEditingCommentId(comment.commentId);
+                                                        setEditingContent(comment.content);
+                                                    }}>수정</button>
+                                                )}
                                                 <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
                                             </div>
-                                        )}
+                                        ) : null}
                                     </div>
                                 )}
                             </li>
