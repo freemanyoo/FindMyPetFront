@@ -1,0 +1,375 @@
+/* LoginPage.css */
+
+/* Container styling */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background decoration */
+.login-page::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -200px;
+    right: -100px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.login-page::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    bottom: -150px;
+    left: -50px;
+    animation: float 8s ease-in-out infinite reverse;
+}
+
+/* Main form card */
+.login-page form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 50px 40px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    width: 100%;
+    max-width: 420px;
+    z-index: 1;
+    animation: slideUp 0.5s ease-out;
+    position: relative;
+}
+
+/* Title styling */
+.login-page h2 {
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+    z-index: 1;
+    position: relative;
+}
+
+/* Form group styling */
+.login-page .form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+/* Label styling with modern approach */
+.login-page label {
+    display: block;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+/* Input styling */
+.login-page input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
+    box-sizing: border-box;
+    letter-spacing: 0.5px;
+}
+
+.login-page input:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.login-page input:hover:not(:focus) {
+    border-color: #cbd5e0;
+    background-color: #fff;
+}
+
+/* Icon styling for inputs (if you want to add icons) */
+.login-page .form-group::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 42px;
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.login-page .form-group:focus-within::before {
+    opacity: 0.8;
+}
+
+/* Submit button styling */
+.login-page .btn.btn-primary {
+    display: flex;                 /* 텍스트를 박스 안에서 정렬하려면 flex가 제일 간단 */
+    align-items: center;           /* 세로 정렬: center(가운데) / flex-start(위) / flex-end(아래) */
+    justify-content: center;
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Button hover effect */
+.login-page .btn.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.login-page .btn.btn-primary:hover::before {
+    width: 400px;
+    height: 100px;
+}
+
+.login-page .btn.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.login-page .btn.btn-primary:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Error message styling */
+.login-page .error-message {
+    background-color: #fed7d7;
+    color: #c53030;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 4px solid #fc8181;
+    animation: shake 0.3s ease-out, slideIn 0.3s ease-out;
+}
+
+/* Register link styling */
+.login-page > p {
+    color: #fff;
+    margin-top: 25px;
+    text-align: center;
+    font-size: 16px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    position: relative;
+}
+
+.login-page > p a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+    padding-bottom: 2px;
+}
+
+.login-page > p a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;
+    transition: width 0.3s ease;
+}
+
+.login-page > p a:hover::after {
+    width: 100%;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .login-page {
+        padding: 10px;
+    }
+
+    .login-page form {
+        padding: 40px 25px 30px;
+        max-width: 350px;
+    }
+
+    .login-page h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .login-page input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .login-page .btn.btn-primary {
+        font-size: 16px;
+        padding: 14px 20px;
+    }
+
+    .login-page::before {
+        width: 300px;
+        height: 300px;
+        top: -150px;
+        right: -80px;
+    }
+
+    .login-page::after {
+        width: 200px;
+        height: 200px;
+        bottom: -100px;
+        left: -30px;
+    }
+}
+
+/* Remember me checkbox styling (if you add this feature) */
+.login-page .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.login-page .checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.login-page .checkbox-group label {
+    margin: 0;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Loading state */
+.login-page .btn.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Focus visible for accessibility */
+.login-page input:focus-visible,
+.login-page .btn.btn-primary:focus-visible {
+    outline: 3px solid #4299e1;
+    outline-offset: 2px;
+}
+
+/* Social login buttons (if you add this feature) */
+.login-page .social-login {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.login-page .social-login button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 2px solid #e2e8f0;
+    background-color: #fff;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.login-page .social-login button:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+}
