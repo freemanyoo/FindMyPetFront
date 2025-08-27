@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
-import '../auth/AuthForm.css'; // 공통 CSS import
+import './ProfilePage.css'; // ✅ 이 파일의 CSS를 import
 
 function ProfilePage() {
     const { user, login } = useAuth();
@@ -27,15 +27,18 @@ function ProfilePage() {
                     address: fetchedUser.address,
                 });
             } catch (err) {
-                // ✅ console.error에 err를 추가하여 경고를 해결하고 디버깅 정보를 남깁니다.
                 console.error("Fetch user info error:", err);
                 setError('사용자 정보를 불러오는 데 실패했습니다.');
             } finally {
                 setLoading(false);
             }
         };
-        fetchUserInfo();
-    }, []);
+        if (user) {
+            fetchUserInfo();
+        } else {
+            setLoading(false);
+        }
+    }, [user]);
 
     const handleEditChange = (e) => {
         const { id, value } = e.target;
@@ -53,7 +56,6 @@ function ProfilePage() {
             login(updatedUser, localStorage.getItem('accessToken'), localStorage.getItem('refreshToken'));
             setLocalUserInfo(updatedUser);
         } catch (err) {
-            // ✅ console.error에 err를 추가합니다.
             console.error("Update user info error:", err);
             setError(err.response?.data?.message || '서버 오류가 발생했습니다.');
         }
@@ -77,7 +79,6 @@ function ProfilePage() {
             setPasswordChangeSuccess('비밀번호가 성공적으로 변경되었습니다.');
             setPasswordChangeData({ currentPassword: '', newPassword: '' });
         } catch (err) {
-            // ✅ console.error에 err를 추가합니다.
             console.error("Password change error:", err);
             setPasswordChangeError(err.response?.data?.message || '서버 오류가 발생했습니다.');
         }
@@ -87,17 +88,17 @@ function ProfilePage() {
     if (!localUserInfo) return <div>사용자 정보를 찾을 수 없습니다. 로그인 해주세요.</div>;
 
     return (
-        <div className="auth-page-container">
-            <h2 className="auth-title">{!isEditing ? '내 정보' : '정보 수정'}</h2>
-            <div className="auth-card">
+        <div className="profile-page-container">
+            <h2 className="profile-title">{!isEditing ? '내 정보' : '정보 수정'}</h2>
+            <div className="profile-card">
                 {!isEditing ? (
                     <div className="profile-info">
-                        <p><strong>아이디</strong> {localUserInfo.loginId}</p>
-                        <p><strong>이름</strong> {localUserInfo.name}</p>
-                        <p><strong>전화번호</strong> {localUserInfo.phoneNumber}</p>
-                        <p><strong>이메일</strong> {localUserInfo.email}</p>
-                        <p><strong>주소</strong> {localUserInfo.address}</p>
-                        <button onClick={() => setIsEditing(true)} className="auth-btn">정보 수정</button>
+                        <p><strong>아이디</strong> <span>{localUserInfo.loginId}</span></p>
+                        <p><strong>이름</strong> <span>{localUserInfo.name}</span></p>
+                        <p><strong>전화번호</strong> <span>{localUserInfo.phoneNumber}</span></p>
+                        <p><strong>이메일</strong> <span>{localUserInfo.email}</span></p>
+                        <p><strong>주소</strong> <span>{localUserInfo.address}</span></p>
+                        <button onClick={() => setIsEditing(true)} className="profile-btn">정보 수정</button>
                     </div>
                 ) : (
                     <form onSubmit={handleEditSubmit}>
@@ -115,15 +116,15 @@ function ProfilePage() {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="button-group">
-                            <button type="submit" className="auth-btn">저장</button>
-                            <button type="button" onClick={() => setIsEditing(false)} className="auth-btn btn-secondary">취소</button>
+                            <button type="submit" className="profile-btn">저장</button>
+                            <button type="button" onClick={() => setIsEditing(false)} className="profile-btn btn-secondary">취소</button>
                         </div>
                     </form>
                 )}
             </div>
 
-            <div className="auth-card" style={{ marginTop: '30px' }}>
-                <h3 className="auth-title" style={{fontSize: '1.5rem'}}>비밀번호 변경</h3>
+            <div className="profile-card">
+                <h3 className="profile-title" style={{fontSize: '1.5rem', color: '#333'}}>비밀번호 변경</h3>
                 <form onSubmit={handlePasswordSubmit}>
                     <div className="form-group">
                         <label htmlFor="currentPassword">현재 비밀번호:</label>
@@ -135,7 +136,7 @@ function ProfilePage() {
                     </div>
                     {passwordChangeError && <p className="error-message">{passwordChangeError}</p>}
                     {passwordChangeSuccess && <p className="success-message">{passwordChangeSuccess}</p>}
-                    <button type="submit" className="auth-btn">비밀번호 변경</button>
+                    <button type="submit" className="profile-btn">비밀번호 변경</button>
                 </form>
             </div>
         </div>
