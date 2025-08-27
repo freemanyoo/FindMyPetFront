@@ -51,7 +51,7 @@ function RegisterPage() {
       }
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.error?.message || '서버 오류가 발생했습니다.');
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.');
     }
   };
 

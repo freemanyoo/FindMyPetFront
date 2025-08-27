@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. axios 인스턴스 생성
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080', // 백엔드 API 서버 주소
+    baseURL: 'http://localhost:8080/api', // 백엔드 API 서버 주소
     timeout: 5000, // 요청 타임아웃 5초
 });
 
