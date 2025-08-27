@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import MainLayout from "./layouts/MainLayout";
+import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProfilePage from './pages/user/ProfilePage';
+import SearchFilterPage from './pages/search_filter/SearchFilterPage';
+
 
 import './App.css';
 
@@ -20,6 +22,7 @@ function App() {
                     {/* Keeping other placeholders for now */}
                     <Route path="board/missing" element={<div>Missing Board Page</div>} />
                     <Route path="board/shelter" element={<div>Shelter Board Page</div>} />
+                    <Route path="/find-pets" element={<SearchFilterPage />} />
                 </Route>
         </Routes>
 
