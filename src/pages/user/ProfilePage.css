@@ -1,0 +1,301 @@
+/* ProfilePage.css */
+
+/* Container styling */
+.profile-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background decoration - similar to login/register */
+.profile-page::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -200px;
+    right: -100px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.profile-page::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    bottom: -150px;
+    left: -50px;
+    animation: float 8s ease-in-out infinite reverse;
+}
+
+/* Main form/display card */
+.profile-page .profile-display,
+.profile-page .profile-form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 50px 40px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    width: 100%;
+    max-width: 500px; /* Slightly wider for profile details */
+    z-index: 1;
+    animation: slideUp 0.5s ease-out;
+    position: relative;
+    margin-top: 20px; /* Space from title */
+}
+
+/* Title styling */
+.profile-page h2 {
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 20px; /* Reverted as per user request */
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+    z-index: 1;
+    position: relative;
+}
+
+/* Profile display section */
+.profile-page .profile-display .info-group {
+    margin-bottom: 15px;
+}
+
+.profile-page .profile-display label {
+    display: block;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+.profile-page .profile-display .info-value {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f7fafc;
+    box-sizing: border-box;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    min-height: 48px; /* To match input height */
+    display: flex;
+    align-items: center;
+}
+
+/* Form group styling */
+.profile-page .form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+/* Label styling */
+.profile-page label {
+    display: block;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+/* Input styling */
+.profile-page input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
+    box-sizing: border-box;
+    letter-spacing: 0.5px;
+}
+
+.profile-page input:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.profile-page input:hover:not(:focus) {
+    border-color: #cbd5e0;
+    background-color: #fff;
+}
+
+/* Button styling */
+.profile-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-page .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.profile-page .btn-secondary {
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.profile-page .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.profile-page .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.profile-page .btn-secondary:hover {
+    background-color: #cbd5e0;
+}
+
+/* Button group spacing */
+.profile-page .button-group {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    margin-top: 20px; /* Space above the button group */
+    justify-content: center; /* Center buttons if they don't fill width */
+}
+
+/* Error message styling */
+.profile-page .error-message {
+    background-color: #fed7d7;
+    color: #c53030;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 4px solid #fc8181;
+    animation: shake 0.3s ease-out, slideIn 0.3s ease-out;
+}
+
+/* Success message styling */
+.profile-page .success-message {
+    background-color: #c6f6d5;
+    color: #2f855a;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 4px solid #48bb78;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-page {
+        padding: 10px;
+    }
+
+    .profile-page .profile-display,
+    .profile-page .profile-form {
+        padding: 40px 25px 30px;
+        max-width: 350px;
+    }
+
+    .profile-page h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .profile-page input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .profile-page .btn {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    .profile-page::before {
+        width: 300px;
+        height: 300px;
+        top: -150px;
+        right: -80px;
+    }
+
+    .profile-page::after {
+        width: 200px;
+        height: 200px;
+        bottom: -100px;
+        left: -30px;
+    }
+}
