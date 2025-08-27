@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-// import axios from "axios"; // ◀️ 기존 axios import 삭제
-import axiosInstance from "../../api/axiosInstance"; // ✅ 새로 만든 인스-턴스를 import
+import axiosInstance from "../../api/axiosInstance";
+import { useAuth } from "../../context/AuthContext";
 
 const CommentComponent = ({ postId, isPostCompleted }) => {
     const [comments, setComments] = useState([]);
@@ -8,15 +8,26 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const [imageFile, setImageFile] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
+    const { user } = useAuth();
+
+    // ✅ 1. 로딩과 에러 상태를 위한 state 추가
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                // ✅ axios -> axiosInstance 로 변경
+                // ✅ 2. API 호출 직전에 로딩 상태를 true로 설정
+                setLoading(true);
+                setError(null);
                 const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
                 console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
+                setError("댓글을 불러오지 못했습니다.");
+            } finally {
+                // ✅ 3. API 호출이 끝나면(성공/실패 모두) 로딩 상태를 false로 설정
+                setLoading(false);
             }
         };
         fetchComments();
@@ -31,10 +42,7 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             formData.append("imageFile", imageFile);
         }
         try {
-            // ✅ axios -> axiosInstance 로 변경
-            const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData, {
-                // ✅ 헤더 설정이 더 이상 필요 없습니다. axiosInstance가 자동으로 처리합니다.
-            });
+            const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData);
             setComments([...comments, response.data]);
             setNewComment("");
             setImageFile(null);
@@ -48,7 +56,6 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const handleDelete = async (commentId) => {
         if (window.confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             try {
-                // ✅ axios -> axiosInstance 로 변경
                 await axiosInstance.delete(`/api/comments/${commentId}`);
                 setComments(comments.filter((comment) => comment.commentId !== commentId));
             } catch (error) {
@@ -65,10 +72,7 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
         formData.append("commentDTO", new Blob([JSON.stringify(commentDTO)], { type: "application/json" }));
 
         try {
-            // ✅ axios -> axiosInstance 로 변경
-            const response = await axiosInstance.put(`/api/comments/${commentId}`, formData, {
-                // ✅ 헤더 설정이 더 이상 필요 없습니다.
-            });
+            const response = await axiosInstance.put(`/api/comments/${commentId}`, formData);
             setComments(
                 comments.map((comment) =>
                     comment.commentId === commentId ? response.data : comment
@@ -90,13 +94,13 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="comment-form">
-          <textarea
-              className="comment-textarea"
-              placeholder="댓글을 입력하세요..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              required
-          ></textarea>
+                    <textarea
+                        className="comment-textarea"
+                        placeholder="댓글을 입력하세요..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        required
+                    ></textarea>
                     <div className="comment-form-actions">
                         <input
                             type="file"
@@ -110,49 +114,61 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             )}
 
             <h3 className="comment-title" style={{ marginTop: '40px' }}>댓글 목록</h3>
-            <ul className="comment-list">
-                {comments.map((comment) => (
-                    <li key={comment.commentId} className="comment-item">
-                        {editingCommentId === comment.commentId ? (
-                            <form onSubmit={(e) => handleUpdateSubmit(e, comment.commentId)}>
-                <textarea
-                    className="comment-textarea"
-                    value={editingContent}
-                    onChange={(e) => setEditingContent(e.target.value)}
-                    required
-                />
-                                <button type="submit">저장</button>
-                                <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
-                            </form>
-                        ) : (
-                            <div>
-                                <div className="comment-author">
-                                    <strong>사용자 ID: {comment.userId}</strong>
-                                </div>
-                                <p className="comment-content">{comment.content}</p>
-                                {comment.imageUrl && (
-                                    <img
-                                        src={`/images/${comment.imageUrl}`}
-                                        alt="댓글 이미지"
-                                        className="comment-image"
-                                        style={{ maxWidth: "200px" }}
-                                    />
+
+            {/* ✅ 4. 로딩 및 에러 상태에 따라 다른 UI를 보여주도록 수정 */}
+            {loading && <div>댓글을 불러오는 중...</div>}
+            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {!loading && !error && (
+                <ul className="comment-list">
+                    {comments.length > 0 ? (
+                        comments.map((comment) => (
+                            <li key={comment.commentId} className="comment-item">
+                                {editingCommentId === comment.commentId ? (
+                                    <form onSubmit={(e) => handleUpdateSubmit(e, comment.commentId)}>
+                                        <textarea
+                                            className="comment-textarea"
+                                            value={editingContent}
+                                            onChange={(e) => setEditingContent(e.target.value)}
+                                            required
+                                        />
+                                        <button type="submit">저장</button>
+                                        <button type="button" onClick={() => setEditingCommentId(null)}>취소</button>
+                                    </form>
+                                ) : (
+                                    <div>
+                                        <div className="comment-author">
+                                            <strong>사용자 ID: {comment.userId}</strong>
+                                        </div>
+                                        <p className="comment-content">{comment.content}</p>
+                                        {comment.imageUrl && (
+                                            <img
+                                                src={`http://localhost:8080/upload/${comment.imageUrl}`}
+                                                alt="댓글 이미지"
+                                                className="comment-image"
+                                                style={{ maxWidth: "200px" }}
+                                            />
+                                        )}
+                                        <div className="comment-date">
+                                            {new Date(comment.createdAt).toLocaleString()}
+                                        </div>
+                                        {user && user.userId === comment.userId && (
+                                            <div className="comment-actions">
+                                                <button onClick={() => {
+                                                    setEditingCommentId(comment.commentId);
+                                                    setEditingContent(comment.content);
+                                                }}>수정</button>
+                                                <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
-                                <div className="comment-date">
-                                    {new Date(comment.createdAt).toLocaleString()}
-                                </div>
-                                <div className="comment-actions">
-                                    <button onClick={() => {
-                                        setEditingCommentId(comment.commentId);
-                                        setEditingContent(comment.content);
-                                    }}>수정</button>
-                                    <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
-                                </div>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+                            </li>
+                        ))
+                    ) : (
+                        <p>아직 댓글이 없습니다.</p>
+                    )}
+                </ul>
+            )}
         </div>
     );
 };
