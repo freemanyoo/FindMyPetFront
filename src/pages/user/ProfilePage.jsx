@@ -105,8 +105,8 @@ function ProfilePage() {
     setPasswordChangeError('');
     setPasswordChangeSuccess('');
 
-    if (passwordChangeData.newPassword.length < 6) {
-      setPasswordChangeError('새 비밀번호는 6자 이상이어야 합니다.');
+    if (passwordChangeData.newPassword.length < 8) {
+      setPasswordChangeError('새 비밀번호는 8자 이상이어야 합니다.');
       return;
     }
 
