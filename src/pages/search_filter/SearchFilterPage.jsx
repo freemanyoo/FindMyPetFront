@@ -34,10 +34,9 @@ const SearchFilterPage = () => {
         // 제목
         if (criteria.title) params.append('title', criteria.title);
 
-        // 동물 이름(작성자 대신 실제 검색이 필요한 필드로 전환)
+        // 동물 이름 (author 필드를 animalName으로 매핑)
         if (criteria.author) {
-            // author는 백엔드에 없을 수 있으므로 넘기지 않음(필요시 여기서 userName 등으로 매핑)
-            // params.append('author', criteria.author);
+            params.append('animalName', criteria.author);
         }
 
         // 날짜 범위
@@ -51,9 +50,6 @@ const SearchFilterPage = () => {
         // 축종/품종
         if (criteria.animalType) params.append('animalCategory', criteria.animalType);
         if (criteria.breed) params.append('animalBreed', criteria.breed);
-
-        // 성별은 백엔드 필드가 없을 수 있으니 전송 생략 (필요 시 매핑)
-        // if (criteria.gender) params.append('gender', criteria.gender);
 
         // 상태 토글: isFound(true/false/null) -> status(COMPLETED/ACTIVE)
         if (criteria.isFound === true) params.append('status', 'COMPLETED');
@@ -91,22 +87,29 @@ const SearchFilterPage = () => {
         setCurrentCriteria(criteria);
     };
 
-    // status <-> isFound 매핑을 고려한 토글(엔드포인트는 기존 그대로 사용)
+    // 백엔드 실제 엔드포인트에 맞게 수정
     const toggleFoundStatus = async (postId) => {
         try {
-            const response = await fetch(`/api/find-pets/${postId}/toggle-found`, { method: 'PATCH' });
+            const response = await fetch(`/api/find-pets/${postId}/complete`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
             if (!response.ok) throw new Error('상태 변경에 실패했습니다.');
 
             const result = await response.json();
 
-            // 백엔드가 isFound 또는 status 중 무엇을 돌려줘도 반영되도록 처리
+            // 백엔드 응답에 맞게 처리
             setSearchResults((prev) => ({
                 ...prev,
                 content: prev.content.map((post) => {
                     if (post.id !== postId) return post;
-                    const nextIsFound = result.isFound ?? (result.status ? result.status.toUpperCase() === 'COMPLETED' : !post.isFound);
-                    const nextStatus = nextIsFound ? 'COMPLETED' : 'ACTIVE';
-                    return { ...post, isFound: nextIsFound, status: nextStatus };
+                    return {
+                        ...post,
+                        status: 'COMPLETED'  // 백엔드에서 완료 상태로만 변경 가능
+                    };
                 }),
             }));
         } catch (err) {
@@ -124,7 +127,7 @@ const SearchFilterPage = () => {
         });
     };
 
-    // 표시에 사용할 값들 폴백 추출
+    // 표시에 사용할 값들 헬퍼 추출
     const pick = (post, ...keys) => {
         for (const k of keys) {
             const v = k.split('.').reduce((acc, cur) => (acc ? acc[cur] : undefined), post);
@@ -134,7 +137,7 @@ const SearchFilterPage = () => {
     };
 
     const getAnimalTypeLabel = (post) => {
-        // 백엔드가 animalCategory 또는 animalType을 줄 수 있음
+        // 백엔드가 animalCategory 필드 사용
         const raw = pick(post, 'animalCategory', 'animalType');
         return raw || '-';
     };
@@ -142,10 +145,8 @@ const SearchFilterPage = () => {
     const getBreed = (post) => pick(post, 'animalBreed', 'breed');
 
     const getGenderLabel = (post) => {
-        const raw = pick(post, 'gender');
-        if (!raw) return null;
-        const genders = { MALE: '수컷', FEMALE: '암컷', UNKNOWN: '모름' };
-        return genders[String(raw).toUpperCase()] || raw;
+        // 백엔드에 gender 필드가 없으므로 null 반환
+        return null;
     };
 
     const getLostDate = (post) => pick(post, 'lostTime', 'lostDate');
@@ -158,13 +159,15 @@ const SearchFilterPage = () => {
         return [city, dist].filter(Boolean).join(' ');
     };
 
-    const getAuthor = (post) =>
-        pick(post, 'author', 'userNickname', 'user.nickname', 'user.name') || '익명';
+    const getAuthor = (post) => {
+        // 백엔드 User 엔티티 관계 고려
+        return pick(post, 'user.nickname', 'user.username', 'user.name', 'author', 'userNickname') || '익명';
+    };
 
     const getCreatedAt = (post) => pick(post, 'createdAt', 'regDate');
 
     const isFound = (post) => {
-        if (post.isFound !== undefined && post.isFound !== null) return !!post.isFound;
+        // 백엔드 status 필드 기준으로 판단
         if (post.status) return String(post.status).toUpperCase() === 'COMPLETED';
         return false;
     };
@@ -208,7 +211,7 @@ const SearchFilterPage = () => {
                         <div className="results-grid">
                             {searchResults.content.map((post) => {
                                 const found = isFound(post);
-                                const genderLabel = getGenderLabel(post); // 없으면 숨김
+                                const genderLabel = getGenderLabel(post);
                                 return (
                                     <div key={post.id} className={`result-card ${found ? 'found' : ''}`}>
                                         <div className="card-header">
@@ -223,15 +226,22 @@ const SearchFilterPage = () => {
                                                 <div className="info-row">
                                                     <span className="info-label">종류</span>
                                                     <span className="info-value">
-                            {getAnimalTypeLabel(post)}
+                                                        {getAnimalTypeLabel(post)}
                                                         {getBreed(post) ? ` (${getBreed(post)})` : ''}
-                          </span>
+                                                    </span>
                                                 </div>
 
-                                                {genderLabel && (
+                                                {post.animalName && (
                                                     <div className="info-row">
-                                                        <span className="info-label">성별</span>
-                                                        <span className="info-value">{genderLabel}</span>
+                                                        <span className="info-label">이름</span>
+                                                        <span className="info-value">{post.animalName}</span>
+                                                    </div>
+                                                )}
+
+                                                {post.animalAge && (
+                                                    <div className="info-row">
+                                                        <span className="info-label">나이</span>
+                                                        <span className="info-value">{post.animalAge}살</span>
                                                     </div>
                                                 )}
 
@@ -267,12 +277,14 @@ const SearchFilterPage = () => {
                                             >
                                                 상세보기
                                             </button>
-                                            <button
-                                                className="btn btn-toggle"
-                                                onClick={() => toggleFoundStatus(post.id)}
-                                            >
-                                                {found ? '검색중으로 변경' : '검색완료로 변경'}
-                                            </button>
+                                            {!found && (
+                                                <button
+                                                    className="btn btn-toggle"
+                                                    onClick={() => toggleFoundStatus(post.id)}
+                                                >
+                                                    검색완료로 변경
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 );
