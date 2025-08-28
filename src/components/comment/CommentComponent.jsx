@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
+import './CommentComponent.css';
 
 const CommentComponent = ({ postId, isPostCompleted }) => {
     const [comments, setComments] = useState([]);
@@ -10,25 +11,23 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const [editingContent, setEditingContent] = useState("");
     const { user } = useAuth();
 
-    // ✅ 1. 로딩과 에러 상태를 위한 state 추가
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                // ✅ 2. API 호출 직전에 로딩 상태를 true로 설정
                 setLoading(true);
                 setError(null);
 
-//                // const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
+                // ✅ [수정] '/api' 제거
+
                 const response = await axiosInstance.get(`/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
                 console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
                 setError("댓글을 불러오지 못했습니다.");
             } finally {
-                // ✅ 3. API 호출이 끝나면(성공/실패 모두) 로딩 상태를 false로 설정
                 setLoading(false);
             }
         };
@@ -44,7 +43,9 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             formData.append("imageFile", imageFile);
         }
         try {
-//            // const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData);
+
+            // ✅ [수정] '/api' 제거
+
             const response = await axiosInstance.post(`/posts/${postId}/comments`, formData);
             setComments([...comments, response.data]);
             setNewComment("");
@@ -59,7 +60,8 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
     const handleDelete = async (commentId) => {
         if (window.confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             try {
-                await axiosInstance.delete(`/api/comments/${commentId}`);
+                // ✅ [수정] '/api' 제거
+                await axiosInstance.delete(`/comments/${commentId}`);
                 setComments(comments.filter((comment) => comment.commentId !== commentId));
             } catch (error) {
                 console.error("댓글 삭제 중 오류가 발생했습니다.", error);
@@ -75,7 +77,8 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
         formData.append("commentDTO", new Blob([JSON.stringify(commentDTO)], { type: "application/json" }));
 
         try {
-            const response = await axiosInstance.put(`/api/comments/${commentId}`, formData);
+            // ✅ [수정] '/api' 제거
+            const response = await axiosInstance.put(`/comments/${commentId}`, formData);
             setComments(
                 comments.map((comment) =>
                     comment.commentId === commentId ? response.data : comment
@@ -118,7 +121,6 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
 
             <h3 className="comment-title" style={{ marginTop: '40px' }}>댓글 목록</h3>
 
-            {/* ✅ 4. 로딩 및 에러 상태에 따라 다른 UI를 보여주도록 수정 */}
             {loading && <div>댓글을 불러오는 중...</div>}
             {error && <div style={{ color: 'red' }}>{error}</div>}
             {!loading && !error && (
@@ -140,7 +142,7 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                                 ) : (
                                     <div>
                                         <div className="comment-author">
-                                            <strong>사용자 ID: {comment.userId}</strong>
+                                            <strong>{comment.userName} ({comment.loginId})</strong>
                                         </div>
                                         <p className="comment-content">{comment.content}</p>
                                         {comment.imageUrl && (
