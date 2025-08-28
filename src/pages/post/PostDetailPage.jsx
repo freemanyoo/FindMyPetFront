@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getPostById, deletePost } from '../../api/postApi';
 import { useAuth } from '../../context/AuthContext';
 import CommentComponent from '../../components/comment/CommentComponent';
+
+import KakaoMap from '../../components/location/KakaoMap'; // ✅ 이 라인을 추가해주세요.
 import './PostDetailPage.css'; // CSS 파일 import
 import KakaoMap from '../../components/location/KakaoMap.jsx';
 
@@ -48,6 +50,9 @@ const PostDetailPage = () => {
 
     const isAuthor = isLoggedIn && user?.userId === post.author.userId;
 
+    // ✅ 상세 페이지의 이미지 URL들 앞에도 서버 주소를 붙여 전체 경로를 만들어줍니다.
+    const fullImageUrls = post.imageUrls?.map(url => `http://localhost:8080/upload/${url}`) || [];
+
     return (
         <section className="board-section">
             <div className="post-detail">
@@ -67,8 +72,9 @@ const PostDetailPage = () => {
 
                 <div className="post-detail-content">
                     <div className="post-image-gallery">
-                        {post.imageUrls && post.imageUrls.map((url, index) => (
-                            <img key={index} src={url} alt={`post image ${index}`} className="gallery-image" />
+                        {/* ✅ 수정된 fullImageUrls를 사용하여 이미지를 렌더링합니다. */}
+                        {fullImageUrls.map((fullUrl, index) => (
+                            <img key={index} src={fullUrl} alt={`post image ${index}`} className="gallery-image" />
                         ))}
                     </div>
 

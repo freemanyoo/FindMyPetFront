@@ -20,7 +20,9 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
                 // ✅ 2. API 호출 직전에 로딩 상태를 true로 설정
                 setLoading(true);
                 setError(null);
-                const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
+
+//                // const response = await axiosInstance.get(`/api/posts/${postId}/comments`);
+                const response = await axiosInstance.get(`/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
                 console.error("댓글을 불러오는 중 오류가 발생했습니다.", error);
@@ -42,7 +44,8 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             formData.append("imageFile", imageFile);
         }
         try {
-            const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData);
+//            // const response = await axiosInstance.post(`/api/posts/${postId}/comments`, formData);
+            const response = await axiosInstance.post(`/posts/${postId}/comments`, formData);
             setComments([...comments, response.data]);
             setNewComment("");
             setImageFile(null);
