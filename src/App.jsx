@@ -7,6 +7,9 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProfilePage from './pages/user/ProfilePage';
 import SearchFilterPage from './pages/search_filter/SearchFilterPage';
+import BoardPage from './pages/post/BoardPage'; // 게시판 목록 페이지
+import PostDetailPage from './pages/post/PostDetailPage'; // 게시판 상세 페이지
+import PostFormPage from './pages/post/PostFormPage'; // 게시판 작성/수정 페이지
 
 
 // Admin components
@@ -40,10 +43,15 @@ function App() {
                     <Route path="register" element={<RegisterPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     {/* Keeping other placeholders for now */}
-                    <Route path="board/missing" element={<div>Missing Board Page</div>} />
-                    <Route path="board/shelter" element={<div>Shelter Board Page</div>} />
+                    {/* ===== 🔽 Post 관련 라우트 추가 🔽 ===== */}
+                    {/*<Route path="board/:type" element={<BoardPage />} /> /!* 1. 목록 (missing, shelter) *!/*/}
+                    <Route path="board/:type" element={<BoardPage />} /> {/* 1. 목록 (missing, shelter) */}
+                    <Route path="posts/new" element={<PostFormPage />} /> {/* 2. 작성 */}
+                    <Route path="posts/:postId" element={<PostDetailPage />} /> {/* 4. 상세 */}
+                    <Route path="posts/:postId/edit" element={<PostFormPage />} /> {/* 5. 수정 */}
                     <Route path="/find-pets" element={<SearchFilterPage />} />
                 </Route>
+
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminRoute />}>
                 <Route element={<AdminLayout />}>

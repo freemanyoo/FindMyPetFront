@@ -39,7 +39,7 @@ const KakaoMap = forwardRef(({ isSelectable = false, initialLocation, onLocation
                         const address = result[0]?.road_address?.address_name || result[0]?.address?.address_name;
                         if (onLocationSelect) {
                             onLocationSelect({
-                                locationName: address,
+                                location: address,
                                 latitude: latlng.getLat(),
                                 longitude: latlng.getLng(),
                             });
@@ -63,7 +63,7 @@ const KakaoMap = forwardRef(({ isSelectable = false, initialLocation, onLocation
 
                     if (onLocationSelect) {
                         onLocationSelect({
-                            locationName: firstPlace.place_name,
+                            location: firstPlace.place_name,
                             latitude: parseFloat(firstPlace.y),
                             longitude: parseFloat(firstPlace.x),
                         });
