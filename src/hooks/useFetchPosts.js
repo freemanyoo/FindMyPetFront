@@ -79,8 +79,16 @@ const useFetchPosts = (filters, page) => {
                 Object.entries(filters).filter(([_, v]) => v !== '' && v !== null)
             );
 
+
+
+            // 👇 이 부분에 방어 코드를 추가합니다.
+            // const validatedPage = Math.max(0, page - 1); // page가 1 미만일 경우 0으로 강제
+
+
+
             const params = {
-                page: page - 1,
+                page: page, // 수정된 변수 사용
+                // page: page - 1,
                 size: 9,
                 ...cleanFilters,
             };
