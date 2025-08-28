@@ -20,7 +20,9 @@ function LoginPage() {
       if (response.data.success) {
         console.log('Login successful:', response.data);
         const { user, accessToken, refreshToken } = response.data.data;
-        login(user, accessToken, refreshToken);
+        login(user);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         navigate('/'); // Redirect to home page or dashboard
       } else {
         setError(response.data.error.message || '로그인 실패');

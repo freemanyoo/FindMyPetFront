@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth(); // Use isLoggedIn and user
 
   const handleLogout = () => {
     logout();
@@ -19,7 +19,7 @@ const Header = () => {
           찾아줘요
         </Link>
         <nav className="nav-buttons">
-          {isAuthenticated ? (
+          {isLoggedIn ? (
             <>
               <span className="user-name">환영합니다, {user?.name}님!</span>
               <Link to="/profile" className="btn btn-outline">
