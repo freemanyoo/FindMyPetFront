@@ -80,7 +80,7 @@ const useFetchPosts = (filters, page) => {
             );
 
             const params = {
-                page: page - 1,
+                page: page, // Changed from page - 1
                 size: 9,
                 ...cleanFilters,
             };
@@ -89,10 +89,10 @@ const useFetchPosts = (filters, page) => {
             // 백엔드 팀과 '/posts'가 맞는지, 아니면 '/find-pets' 같은 새로운 엔드포인트가 필요한지 확인해야 합니다.
             // 우선은 기존 '/posts'를 사용한다고 가정합니다.
             const response = await axiosInstance.get('/posts', { params });
-            const responseData = response.data.data;
+            const responseData = response.data; // Changed from response.data.data
 
-            setPosts(responseData.posts);
-            setPagination(responseData.pagination);
+            setPosts(responseData.dtoList); // Changed from responseData.posts
+            setPagination(responseData); // Changed from responseData.pagination
 
         } catch (err) {
             console.error("게시글 목록을 불러오는 중 오류 발생:", err);
