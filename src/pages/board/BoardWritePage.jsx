@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate, useLocation} from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import './BoardWritePage.css'; // 스타일 import
 
@@ -7,9 +7,18 @@ const BoardWritePage = () => {
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEditMode = Boolean(postId);
+    const { search } = useLocation(); // ✅ useLocation 훅 사용
+
+    // ✅ URL 쿼리스트링에서 'type' 값을 읽어옴
+    const queryParams = new URLSearchParams(search);
+    const typeFromQuery = queryParams.get('type'); // 'missing' 또는 'shelter'
+
+    // ✅ 읽어온 type에 따라 postType의 기본값을 설정
+    // 'shelter'면 'SHELTER', 그 외에는 'MISSING'을 기본값으로 사용
+    const initialPostType = typeFromQuery === 'shelter' ? 'SHELTER' : 'MISSING';
 
     const [postData, setPostData] = useState({
-        postType: 'MISSING',
+        postType: initialPostType,
         title: '',
         content: '',
         animalName: '',
