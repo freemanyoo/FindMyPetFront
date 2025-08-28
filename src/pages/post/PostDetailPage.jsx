@@ -6,7 +6,6 @@ import CommentComponent from '../../components/comment/CommentComponent';
 
 import KakaoMap from '../../components/location/KakaoMap'; // ✅ 이 라인을 추가해주세요.
 import './PostDetailPage.css'; // CSS 파일 import
-import KakaoMap from '../../components/location/KakaoMap.jsx';
 
 const PostDetailPage = () => {
     const { postId } = useParams();
