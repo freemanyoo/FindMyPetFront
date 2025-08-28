@@ -7,7 +7,7 @@ const AdminDashboardPage = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { userRole } = useAuth();
+    const {userRole} = useAuth();
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -42,35 +42,41 @@ const AdminDashboardPage = () => {
     }
 
     return (
-        <div>
+        <div className="admin-container">
             <h1>관리자 대시보드</h1>
             {stats ? (
-                <div>
-                    <h2>통계 요약</h2>
-                    <p>총 게시글 수: {stats.totalPosts}</p>
-                    <p>실종 게시글 수: {stats.missingPosts}</p>
-                    <p>보호 게시글 수: {stats.shelterPosts}</p>
-                    <p>완료된 게시글 수: {stats.completedPosts}</p>
-                    <p>오늘 등록된 게시글 수: {stats.todayPosts}</p>
-
-                    <h3>최근 완료된 게시글</h3>
-                    {stats.recentCompletions && stats.recentCompletions.length > 0 ? (
-                        <ul>
-                            {stats.recentCompletions.map((completion) => (
-                                <li key={completion.postId}>
-                                    {completion.title} (완료일: {new Date(completion.completedAt).toLocaleDateString()})
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>최근 완료된 게시글이 없습니다.</p>
-                    )}
+                <div className="admin-card">
+                    <h2 className="admin-card-header">통계 요약</h2>
+                    <div className="admin-card-body admin-stats-grid">
+                        <div className="admin-stat-item"><h4>총 게시글 수</h4><p>{stats.totalPosts}</p></div>
+                        <div className="admin-stat-item"><h4>실종 게시글 수</h4><p>{stats.missingPosts}</p></div>
+                        <div className="admin-stat-item"><h4>보호 게시글 수</h4><p>{stats.shelterPosts}</p></div>
+                        <div className="admin-stat-item"><h4>완료된 게시글 수</h4><p>{stats.completedPosts}</p></div>
+                        <div className="admin-stat-item"><h4>오늘 등록된 게시글 수</h4><p>{stats.todayPosts}</p></div>
+                    </div>
                 </div>
             ) : (
                 <p>통계 정보를 불러올 수 없습니다.</p>
             )}
-        </div>
-    );
-};
 
-export default AdminDashboardPage;
+            {stats && (
+                <div className="admin-card">
+                    <h3 className="admin-card-header">최근 완료된 게시글</h3>
+                    <div className="admin-card-body">
+                        {stats.recentCompletions && stats.recentCompletions.length > 0 ? (
+                            <ul className="admin-list">
+                                {stats.recentCompletions.map((completion) => (
+                                    <li key={completion.postId}>
+                                        {completion.title} (완료일: {new Date(completion.completedAt).toLocaleDateString()})
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>최근 완료된 게시글이 없습니다.</p>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}

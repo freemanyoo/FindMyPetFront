@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosInstance'; // Assuming axiosInstance is correctly configured with auth headers
-import { useAuth } from '../../context/AuthContext'; // To get the token if needed, though axiosInstance should handle it
+import { useAuth } from '../../context/AuthContext'; // To ensure only ADMIN can access, though AdminRoute already handles this
+import '../admin/Admin.css'; // Import the new Admin CSS
 
 const UserManagementPage = () => {
     const [users, setUsers] = useState([]);
@@ -47,7 +48,10 @@ const UserManagementPage = () => {
             {users.length === 0 ? (
                 <p>등록된 사용자가 없습니다.</p>
             ) : (
-                <table>
+                <div className="admin-card">
+                    <h2 className="admin-card-header">사용자 목록</h2>
+                    <div className="admin-card-body">
+                        <table className="admin-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -69,6 +73,8 @@ const UserManagementPage = () => {
                         ))}
                     </tbody>
                 </table>
+                    </div>
+                </div>
             )}
         </div>
     );

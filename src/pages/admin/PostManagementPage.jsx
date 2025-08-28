@@ -108,12 +108,17 @@ const PostManagementPage = () => {
             {posts.length === 0 ? (
                 <p>등록된 게시글이 없습니다.</p>
             ) : (
-                <table>
+                <div className="admin-card">
+                    <h2 className="admin-card-header">게시글 관리</h2>
+                    <div className="admin-card-body">
+                        <table className="admin-table">
                     <thead><tr><th>ID</th><th>제목</th><th>동물 이름</th><th>유형</th><th>상태</th><th>작성자</th><th>작성일</th><th>액션</th></tr></thead>
                     <tbody>{posts.map((post) => (<tr key={post.id}><td>{post.postId}</td><td>{post.title}</td><td>{post.animalName}</td><td>{post.postType}</td><td>{post.status}</td><td>{post.author?.name || '알 수 없음'}</td><td>{new Date(post.createdAt).toLocaleDateString()}</td><td><button onClick={() => handleShowComments(post.id)}>댓글 보기</button><button onClick={() => handleDelete(post.id)}>삭제</button></td></tr>))}</tbody>
                 </table>
+                    </div>
+                </div>
             )}
-            <div>
+            <div className="admin-pagination">
                 <button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                     이전
                 </button>
