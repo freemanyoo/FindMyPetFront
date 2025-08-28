@@ -94,7 +94,9 @@ function ProfilePage() {
     e.preventDefault();
     setError('');
     try {
-      const response = await axiosInstance.put('/users/me', editFormData);
+      const { name, phoneNumber, email, address } = editFormData;
+      const response = await axiosInstance.put('/users/me', { name, phoneNumber, email, address });
+
       if (response.data.success) {
         alert('회원 정보가 성공적으로 수정되었습니다.');
         setIsEditingProfile(false); // Corrected
