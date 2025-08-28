@@ -1,9 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './PostCard.css'; // ✅ 새로 만든 CSS 파일을 import 합니다.
 
 const PostCard = ({ post }) => {
     const isCompleted = post.status === 'COMPLETED';
     const typeText = post.postType === 'MISSING' ? '실종' : '보호';
+
+    // ✅ 썸네일 URL을 백엔드 서버 주소를 포함한 전체 경로로 만듭니다.
+    const thumbnailUrl = post.thumbnailUrl
+        ? `http://localhost:8080/upload/${post.thumbnailUrl}`
+        : null;
 
     const getStatusBadge = () => {
         if (isCompleted) {
@@ -13,9 +19,11 @@ const PostCard = ({ post }) => {
     };
 
     return (
+        // Link 컴포넌트는 그대로 유지합니다.
         <Link to={`/posts/${post.postId}`} className="post-card">
-            <div className="post-image" style={{ backgroundImage: `url(${post.thumbnailUrl})` }}>
-                {!post.thumbnailUrl && <i className="fas fa-image"></i>}
+            {/* ✅ 수정된 thumbnailUrl을 backgroundImage로 사용합니다. */}
+            <div className="post-image" style={{ backgroundImage: `url(${thumbnailUrl})`, backgroundColor: '#e0e0e0' }}>
+                {!thumbnailUrl && <i className="fas fa-image"></i>}
                 {getStatusBadge()}
             </div>
             <div className="post-content">

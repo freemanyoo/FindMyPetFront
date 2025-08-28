@@ -19,7 +19,9 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             try {
                 setLoading(true);
                 setError(null);
+
                 // ✅ [수정] '/api' 제거
+
                 const response = await axiosInstance.get(`/posts/${postId}/comments`);
                 setComments(response.data);
             } catch (error) {
@@ -41,7 +43,9 @@ const CommentComponent = ({ postId, isPostCompleted }) => {
             formData.append("imageFile", imageFile);
         }
         try {
+
             // ✅ [수정] '/api' 제거
+
             const response = await axiosInstance.post(`/posts/${postId}/comments`, formData);
             setComments([...comments, response.data]);
             setNewComment("");
