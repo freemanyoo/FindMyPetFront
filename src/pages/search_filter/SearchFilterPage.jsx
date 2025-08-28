@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SearchFilterBox from '../../components/search_filter/SearchFilterBox';
+import SearchFilterBox from '../../components/board/SearchFilterBox.jsx';
 import './SearchFilterPage.css';
 
 const SearchFilterPage = () => {
