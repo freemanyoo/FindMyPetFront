@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom'; // Add useNavigate 
 import './ProfilePage.css';
 
 function ProfilePage() {
-  const { user } = useAuth(); // Get user from AuthContext
+    const { user, login } = useAuth(); // ✅ login 함수도 가져옵니다. // Get user from AuthContext
   const navigate = useNavigate(); // Initialize useNavigate
   const location = useLocation(); // Initialize useLocation
   const [localUserInfo, setLocalUserInfo] = useState(user);
@@ -100,18 +100,15 @@ function ProfilePage() {
         setIsEditingProfile(false); // Corrected
         // Re-fetch user info to update the displayed data (or update local state if App.jsx handles it)
         // For now, re-fetch to ensure consistency with backend
-        const updatedResponse = await axiosInstance.get('/users/me');
-        if (updatedResponse.data.success) {
-          setLocalUserInfo(updatedResponse.data.data);
-          setEditFormData({
-            name: updatedResponse.data.data.name,
-            phoneNumber: updatedResponse.data.data.phoneNumber,
-            email: updatedResponse.data.data.email,
-            address: updatedResponse.data.data.address,
-          });
-        }
+          const updatedUserResponse = await axiosInstance.get('/users/me');
+          if (updatedUserResponse.data.success) {
+              const updatedUser = updatedUserResponse.data.data;
+              // ✅ AuthContext의 login 함수를 호출하여 전역 user 상태를 업데이트합니다.
+              //    Header 등 다른 컴포넌트에도 변경사항이 즉시 반영됩니다.
+              login(updatedUser);
+          }
       } else {
-        setError(response.data.error.message || '회원 정보 수정에 실패했습니다.');
+          setError(response.data.error.message || '회원 정보 수정에 실패했습니다.');
       }
     } catch (err) {
       console.error('Update user info error:', err);
