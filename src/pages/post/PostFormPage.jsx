@@ -1,5 +1,5 @@
 import React, { useState, useEffect , useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate, useLocation} from 'react-router-dom';
 import { createPost, getPostById, updatePost } from '../../api/postApi';
 import ImageUpload from '../../components/post/ImageUpload';
 import './PostFormPage.css'; // CSS 파일 import
@@ -15,6 +15,16 @@ const PostFormPage = () => {
     const mapRef = useRef(null); // ✅ 지도 인스턴스를 참조하기 위한 ref
     const [mapSearchKeyword, setMapSearchKeyword] = useState(''); // ✅ 지도 검색어 상태
 
+    const { search } = useLocation(); // ✅ 현재 URL 정보를 가져옵니다.
+
+    // ✅ URL의 쿼리 스트링(?type=shelter 등)을 파싱합니다.
+    const queryParams = new URLSearchParams(search);
+    const typeFromQuery = queryParams.get('type'); // 'shelter' 또는 'missing' 값을 가져옵니다.
+
+    // ✅ URL에서 가져온 type 값에 따라 초기 게시판 종류를 결정합니다.
+    // type이 'shelter'면 'SHELTER'로, 그렇지 않으면(null이거나 'missing'이면) 'MISSING'으로 설정합니다.
+    const initialPostType = typeFromQuery === 'shelter' ? 'SHELTER' : 'MISSING';
+
 
     const [formData, setFormData] = useState({
         title: '',
@@ -25,7 +35,7 @@ const PostFormPage = () => {
         animalBreed: '',
         gender: 'UNKNOWN',
         lostTime: '',
-        postType: 'MISSING',
+        postType: initialPostType,
         location: '',
         latitude: 0,
         longitude: 0,

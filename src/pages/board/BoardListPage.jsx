@@ -45,7 +45,7 @@ const BoardListPage = () => {
                     {pagination ? `총 ${pagination.totalElements} 건` : '게시글 수를 계산 중...'}
                 </span>
                 {isLoggedIn && (
-                    <Link to="/board/write" className="btn btn-primary">
+                    <Link to={`/board/write?type=${type}`} className="btn btn-primary">
                         <i className="fas fa-plus"></i> 글쓰기
                     </Link>
                 )}

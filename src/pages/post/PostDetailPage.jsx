@@ -4,6 +4,7 @@ import { getPostById, deletePost } from '../../api/postApi';
 import { useAuth } from '../../context/AuthContext';
 import CommentComponent from '../../components/comment/CommentComponent';
 import './PostDetailPage.css'; // CSS 파일 import
+import KakaoMap from '../../components/location/KakaoMap.jsx';
 
 const PostDetailPage = () => {
     const { postId } = useParams();

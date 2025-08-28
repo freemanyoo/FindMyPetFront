@@ -63,7 +63,7 @@ const BoardPage = () => {
                 </h2>
                 <div className="board-controls">
                     {isLoggedIn && (
-                        <Link to="/posts/new" className="btn btn-primary">
+                        <Link to={`/posts/new?type=${type}`} className="btn btn-primary">
                             <i className="fas fa-plus"></i> 글쓰기
                         </Link>
                     )}
