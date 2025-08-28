@@ -13,7 +13,7 @@ const BoardListPage = () => {
 
     // SearchFilterBox의 모든 필터 조건을 담을 state. type도 여기에 포함.
     const [filters, setFilters] = useState({ type: type });
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     // URL의 type이 변경되면 filters에도 반영
     useEffect(() => {

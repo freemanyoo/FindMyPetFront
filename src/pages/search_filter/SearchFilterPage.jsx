@@ -39,11 +39,11 @@ const SearchFilterPage = () => {
             params.append('animalName', criteria.author);
         }
 
-        // 날짜 범위 - lostTime으로 변환
+        // 날짜 범위
         if (criteria.lostDateFrom) params.append('lostTimeFrom', criteria.lostDateFrom);
         if (criteria.lostDateTo) params.append('lostTimeTo', criteria.lostDateTo);
 
-        // 위치 정보
+        // 👇 [수정] cityProvince와 district를 합치는 로직 대신, location 키워드를 직접 사용
         if (criteria.location) {
             params.append('location', criteria.location);
         }
@@ -64,8 +64,7 @@ const SearchFilterPage = () => {
         setError(null);
         try {
             const searchParams = toBackendParams(criteria, page);
-            // ✅ API 엔드포인트 수정
-            const response = await fetch(`/api/find-pets/search?${searchParams}`);
+            const response = await fetch(`/api/posts?${searchParams}`);
             if (!response.ok) throw new Error('검색 요청이 실패했습니다.');
 
             const data = await response.json();
@@ -89,8 +88,7 @@ const SearchFilterPage = () => {
 
     const toggleFoundStatus = async (postId) => {
         try {
-            // ✅ API 엔드포인트 수정
-            const response = await fetch(`/api/find-pets/${postId}/complete`, { method: 'PATCH' });
+            const response = await fetch(`/api/posts/${postId}/complete`, { method: 'PATCH' });
             if (!response.ok) throw new Error('상태 변경에 실패했습니다.');
 
             handleSearch(currentCriteria, searchResults.page);
@@ -114,11 +112,11 @@ const SearchFilterPage = () => {
     };
 
     const getLocation = (post) => {
+        // [수정] 표시 로직도 단순하게 post.location을 우선적으로 사용하도록 변경
         return pick(post, 'location') || '-';
     };
 
     const getAuthor = (post) => {
-        // ✅ author 객체 구조에 맞게 수정
         return post.author?.name || '익명';
     };
 
@@ -171,31 +169,16 @@ const SearchFilterPage = () => {
                                                 <span className="info-label">작성자</span>
                                                 <span className="info-value">{getAuthor(post)}</span>
                                             </div>
-                                            <div className="info-row">
-                                                <span className="info-label">동물명</span>
-                                                <span className="info-value">{post.animalName || '-'}</span>
-                                            </div>
-                                            <div className="info-row">
-                                                <span className="info-label">품종</span>
-                                                <span className="info-value">{post.animalBreed || '-'}</span>
-                                            </div>
+                                            {/* 👇 [추가] 이 부분을 추가하여 formatDate 함수를 사용합니다. */}
                                             <div className="info-row">
                                                 <span className="info-label">등록일</span>
                                                 <span className="info-value">{formatDate(post.createdAt || post.regDate)}</span>
                                             </div>
                                         </div>
                                         <div className="card-actions">
-                                            <button
-                                                className="btn btn-detail"
-                                                onClick={() => window.location.href = `/posts/${post.id}`}
-                                            >
-                                                상세보기
-                                            </button>
+                                            <button className="btn btn-detail">상세보기</button>
                                             {!found && (
-                                                <button
-                                                    className="btn btn-toggle"
-                                                    onClick={() => toggleFoundStatus(post.id)}
-                                                >
+                                                <button className="btn btn-toggle" onClick={() => toggleFoundStatus(post.id)}>
                                                     완료로 변경
                                                 </button>
                                             )}

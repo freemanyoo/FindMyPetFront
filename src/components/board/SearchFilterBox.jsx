@@ -23,9 +23,9 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
 
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // useEffect(() => { loadFilterOptions(); }, []);
-    //
-    // // 👈 [제거] cityProvince에 따라 district를 로드하던 useEffect 제거
+    useEffect(() => { loadFilterOptions(); }, []);
+
+    // 👈 [제거] cityProvince에 따라 district를 로드하던 useEffect 제거
 
     useEffect(() => {
         if (searchCriteria.animalType) {
@@ -34,24 +34,24 @@ const SearchFilterBox = ({ onSearch, onFilterChange }) => {
         }
     }, [searchCriteria.animalType]);
 
-    // const loadFilterOptions = async () => {
-    //     try {
-    //         const resp = await fetch('/api/find-pets/filter-options');
-    //         if (!resp.ok) throw new Error('filter-options not available');
-    //         const data = await resp.json();
-    //         const animalCategories = data.animalCategories || data.animalTypes || [];
-    //         const normalizedTypes = animalCategories.map((t) =>
-    //             typeof t === 'string' ? { value: t, label: t } : t
-    //         );
-    //         setFilterOptions(prev => ({
-    //             ...prev,
-    //             animalTypes: normalizedTypes,
-    //             genders: data.genders || [],
-    //         }));
-    //     } catch (e) {
-    //         console.warn('필터 옵션 로드 실패(무시 가능):', e);
-    //     }
-    // };
+    const loadFilterOptions = async () => {
+        try {
+            const resp = await fetch('/api/find-pets/filter-options');
+            if (!resp.ok) throw new Error('filter-options not available');
+            const data = await resp.json();
+            const animalCategories = data.animalCategories || data.animalTypes || [];
+            const normalizedTypes = animalCategories.map((t) =>
+                typeof t === 'string' ? { value: t, label: t } : t
+            );
+            setFilterOptions(prev => ({
+                ...prev,
+                animalTypes: normalizedTypes,
+                genders: data.genders || [],
+            }));
+        } catch (e) {
+            console.warn('필터 옵션 로드 실패(무시 가능):', e);
+        }
+    };
 
     // 👈 [제거] loadDistricts 함수 제거
 
