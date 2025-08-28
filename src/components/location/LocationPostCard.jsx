@@ -16,7 +16,7 @@ const LocationPostCard = ({ post }) => {
                 <i className="fas fa-map-marker-alt"></i>
             </div>
             <div className="post-content">
-                <h3 className="post-title">{post.locationName}</h3>
+                <h3 className="post-title">{post.location}</h3>
                 <p className="post-meta">위도: {post.latitude.toFixed(4)}, 경도: {post.longitude.toFixed(4)}</p>
                 <div className="post-date">
                     <i className="fas fa-calendar"></i>

@@ -8,7 +8,7 @@ const API_BASE_URL = 'http://localhost:8080/api/locations';
 
 const LocationPostForm = ({ onCancel, onSubmitSuccess }) => {
     const [formData, setFormData] = useState({
-        locationName: '',
+        location: '',
         latitude: 37.566826,  // 기본 위도 (서울시청)
         longitude: 126.9786567, // 기본 경도 (서울시청)
     });
@@ -18,7 +18,7 @@ const LocationPostForm = ({ onCancel, onSubmitSuccess }) => {
     const handleLocationSelect = (selectedLocation) => {
         setFormData(prev => ({
             ...prev,
-            locationName: selectedLocation.locationName,
+            location: selectedLocation.location,
             latitude: selectedLocation.latitude,
             longitude: selectedLocation.longitude,
         }));
@@ -67,7 +67,7 @@ const LocationPostForm = ({ onCancel, onSubmitSuccess }) => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label className="form-label">위치명</label>
-                        <input type="text" name="locationName" className="form-input" placeholder="지도에서 선택하거나 직접 입력하세요" value={formData.locationName} onChange={handleChange}/>
+                        <input type="text" name="locationName" className="form-input" placeholder="지도에서 선택하거나 직접 입력하세요" value={formData.location} onChange={handleChange}/>
                     </div>
                     <div className="form-group">
                         <label className="form-label">위치 검색 및 선택</label>
