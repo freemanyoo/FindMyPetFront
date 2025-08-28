@@ -44,6 +44,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userRole');
     localStorage.removeItem('user'); // Clear user object from localStorage
+      // 추가_CKM
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      //
   };
 
   return (

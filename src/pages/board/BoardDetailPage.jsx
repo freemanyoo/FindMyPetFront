@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import CommentComponent from '../components/comment/CommentComponent';
-import axiosInstance from '../api/axiosInstance'; // API 호출을 위해 import
+import CommentComponent from '../../components/comment/CommentComponent.jsx';
+import axiosInstance from '../../api/axiosInstance.js'; // API 호출을 위해 import
 
-const PostDetailPage = () => {
+const BoardDetailPage = () => {
     const { postId } = useParams();
 
     // 1. 게시글, 로딩, 에러 상태를 관리할 State 추가
@@ -60,4 +60,4 @@ const PostDetailPage = () => {
     );
 };
 
-export default PostDetailPage;
+export default BoardDetailPage;
