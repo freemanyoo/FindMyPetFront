@@ -1,0 +1,398 @@
+
+/* General Admin Page Layout */
+.admin-container {
+    padding: 30px;
+    background-color: #f0f2f5; /* Light gray background */
+    min-height: calc(100vh - 60px); /* Adjust based on header/footer height */
+    border-radius: 12px; /* Slightly more rounded corners */
+    margin: 20px auto; /* Center the container and add margin */
+    max-width: 1200px; /* Max width for better readability on large screens */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Enhanced shadow */
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+/* Card/Panel Styling */
+.admin-card {
+    background-color: #ffffff;
+    border-radius: 12px; /* Consistent with container */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+    padding: 30px; /* Increased padding */
+    margin-bottom: 30px; /* Increased spacing between cards */
+}
+
+.admin-card-header {
+    font-size: 1.8rem; /* Larger font size */
+    color: #2c3e50; /* Darker heading color */
+    margin-bottom: 25px; /* Increased margin */
+    padding-bottom: 12px; /* Increased padding */
+    border-bottom: 1px solid #e0e0e0; /* Lighter border */
+}
+
+.admin-card-body {
+    /* Add any specific styling for the body of the card if needed */
+}
+
+/* Adjust existing h2/h3 to use admin-card-header where appropriate */
+.admin-container h2 {
+    /* Keep general h2 styling, but admin-card-header will override for cards */
+}
+
+.admin-container h3 {
+    /* Keep general h3 styling, but admin-card-header will override for cards */
+}
+
+/* Adjust table margin to fit within card */
+.admin-table {
+    margin-top: 0; /* Reset margin as it will be inside a card */
+}
+
+/* Specific styling for dashboard stats */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.admin-stat-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.admin-stat-item h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.admin-stat-item p {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+}
+
+.admin-list {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-list li {
+    background-color: #f5f5f5; /* Lighter background for list items */
+    margin-bottom: 10px; /* Increased margin */
+    padding: 15px 20px; /* Increased padding */
+    border-radius: 8px; /* More rounded corners */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    font-size: 1rem; /* Standard font size */
+}
+
+.admin-list li:last-child {
+    margin-bottom: 0;
+}
+
+.admin-container h1 {
+    color: #2c3e50; /* Darker heading color */
+    margin-bottom: 30px; /* Increased margin */
+    font-size: 2.5rem; /* Larger font size */
+    border-bottom: 2px solid #dcdcdc; /* Lighter border */
+    padding-bottom: 18px; /* Increased padding */
+    text-align: center; /* Center align heading */
+}
+
+.admin-container h2 {
+    color: #34495e; /* Darker heading color */
+    margin-top: 35px; /* Increased margin */
+    margin-bottom: 20px; /* Increased margin */
+    font-size: 2rem; /* Larger font size */
+}
+
+.admin-container h3 {
+    color: #34495e; /* Darker heading color */
+    margin-top: 25px; /* Increased margin */
+    margin-bottom: 15px; /* Increased margin */
+    font-size: 1.6rem; /* Larger font size */
+}
+
+/* Table Styling */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures rounded corners apply to children */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-table th {
+    background-color: #e9ecef; /* Light header background */
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.admin-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Zebra striping */
+}
+
+.admin-table tbody tr:hover {
+    background-color: #e2f0ff; /* Hover effect */
+}
+
+/* Button Styling */
+.admin-btn {
+    padding: 10px 20px; /* Slightly larger padding */
+    border: none;
+    border-radius: 8px; /* More rounded corners */
+    cursor: pointer;
+    font-size: 1rem; /* Slightly larger font */
+    font-weight: 600; /* Bolder font */
+    transition: all 0.3s ease; /* Smooth transitions for all properties */
+    margin-right: 10px; /* Increased spacing between buttons */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.admin-btn:last-child {
+    margin-right: 0; /* No margin for the last button */
+}
+
+.admin-btn:hover {
+    transform: translateY(-2px); /* Lift effect on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+.admin-btn:active {
+    transform: translateY(0); /* Press down effect on click */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Reduced shadow on active */
+}
+
+.admin-btn:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Focus ring for accessibility */
+}
+
+.admin-btn-primary {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+.admin-btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.admin-btn-danger {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.admin-btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Add a neutral button style for general actions */
+.admin-btn-secondary {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+.admin-btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Pagination Styling */
+.admin-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+.admin-pagination button {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.admin-pagination button:hover:not(:disabled) {
+    background-color: #e9ecef;
+}
+
+.admin-pagination button:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.admin-pagination span {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Modal Styling */
+.admin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.admin-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.admin-modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.admin-modal.active .admin-modal-content {
+    transform: translateY(0);
+}
+
+.admin-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s ease;
+}
+
+.admin-modal-close:hover {
+    color: #333;
+}
+
+.admin-modal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.8rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.admin-modal ul {
+    list-style: none;
+    padding: 0;
+    max-height: 400px; /* Scrollable if many comments */
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.admin-modal li {
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+}
+
+.admin-modal li p {
+    margin: 0 0 5px 0;
+    color: #555;
+}
+
+.admin-modal li button {
+    margin-top: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+}
+
+.admin-modal li button:hover {
+    background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .admin-container {
+        margin: 15px;
+        padding: 25px;
+    }
+
+    .admin-container h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .admin-container h2 {
+        font-size: 1.6rem;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+    .admin-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .admin-card-header {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .admin-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+    }
+
+    .admin-modal-content {
+        width: 95%;
+        padding: 25px;
+    }
+
+    .admin-modal-close {
+        font-size: 1.8rem;
+        top: 10px;
+        right: 15px;
+    }
+}

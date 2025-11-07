@@ -1,44 +1,60 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    const storedLoggedIn = localStorage.getItem('isLoggedIn');
+    return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
+  });
+  const [userRole, setUserRole] = useState(() => {
+    const storedUserRole = localStorage.getItem('userRole');
+    return storedUserRole ? storedUserRole : null;
+  });
+  // Add state for user object
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-    useEffect(() => {
-        // Check if user info is in localStorage on initial load
-        try {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
-            }
-        } catch (error) {
-            console.error("Failed to parse user from localStorage", error);
-            localStorage.removeItem('user');
-        }
-    }, []);
+  useEffect(() => {
+    localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
+  }, [isLoggedIn]);
 
-    const login = (userData, accessToken, refreshToken) => {
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        setUser(userData);
-    };
+  useEffect(() => {
+    localStorage.setItem('userRole', userRole);
+  }, [userRole]);
 
-    const logout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setUser(null);
-    };
+  // Effect for user object
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
-    const isAuthenticated = !!user;
+  // Modify login to accept user object
+  const login = (userData) => { // userData will be the full user object from backend
+    setIsLoggedIn(true);
+    setUserRole(userData.role);
+    setUser(userData); // Store the full user object
+  };
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    setIsLoggedIn(false);
+    setUserRole(null);
+    setUser(null); // Clear user object
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('user'); // Clear user object from localStorage
+      // 추가_CKM
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      //
+  };
+
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, userRole, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

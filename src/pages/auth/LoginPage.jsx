@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../util/axiosInstance';
+import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
+import './LoginPage.css';
 
 function LoginPage() {
   const [loginId, setLoginId] = useState('');
@@ -19,7 +20,9 @@ function LoginPage() {
       if (response.data.success) {
         console.log('Login successful:', response.data);
         const { user, accessToken, refreshToken } = response.data.data;
-        login(user, accessToken, refreshToken);
+        login(user);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         navigate('/'); // Redirect to home page or dashboard
       } else {
         setError(response.data.error.message || '로그인 실패');
@@ -56,6 +59,7 @@ function LoginPage() {
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="btn btn-primary">로그인</button>
+
       </form>
       <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
     </div>
